@@ -11,6 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         /* --- Theme Setup --- */
@@ -20,7 +21,6 @@
             --gold-accent: #f97825;
             --text-white: #ffffff;
             --bg-light: #f4f6f8;
-            --bg-section: #ffffff;
         }
 
         * {
@@ -38,12 +38,10 @@
 
         h1,
         h2,
-        h3,
-        .brand-font {
+        h3 {
             font-family: 'Merriweather', serif;
         }
 
-        /* --- Header --- */
         header {
             background-color: var(--harvard-crimson);
             color: var(--text-white);
@@ -79,7 +77,6 @@
             color: var(--gold-accent);
         }
 
-        /* --- Main Container --- */
         .container {
             max-width: 1100px;
             margin: 40px auto;
@@ -93,65 +90,6 @@
             font-size: 2.5rem;
         }
 
-        /* --- Admin Panel (Copy Style) --- */
-        .admin-panel {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 5px solid var(--harvard-black);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 40px;
-        }
-
-        .pin-input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        input,
-        select {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-login {
-            background-color: var(--harvard-black);
-            color: white;
-        }
-
-        .btn-post {
-            background-color: var(--harvard-crimson);
-            color: white;
-        }
-
-        #uploadForm {
-            display: none;
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-            margin-top: 10px;
-            animation: fadeIn 0.5s;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        /* --- Document Grid --- */
         .doc-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -164,11 +102,12 @@
             padding: 25px;
             border-radius: 6px;
             border-top: 4px solid var(--harvard-crimson);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             min-height: 200px;
+            animation: fadeIn 0.5s;
         }
 
         .doc-card:hover {
@@ -208,7 +147,6 @@
             font-size: 1.15rem;
             font-weight: 600;
             margin-bottom: 5px;
-            line-height: 1.4;
         }
 
         .doc-meta {
@@ -223,28 +161,119 @@
             font-weight: 600;
             text-decoration: none;
             border-bottom: 2px solid transparent;
-            padding-bottom: 2px;
-            transition: 0.3s;
         }
 
         .download-btn:hover {
             border-bottom: 2px solid var(--harvard-crimson);
         }
 
-        .new-badge {
-            background: var(--gold-accent);
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 10px;
-            margin-left: 8px;
-            vertical-align: middle;
+        /* --- Admin Icon --- */
+        .admin-trigger {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 900;
+            color: #888;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
         }
 
-        @keyframes fadeIn {
+        .admin-trigger:hover {
+            background: var(--harvard-crimson);
+            color: white;
+            border-color: var(--harvard-crimson);
+        }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+            animation: slideUp 0.3s;
+        }
+
+        .auth-section,
+        .upload-section {
+            display: none;
+        }
+
+        .auth-section.active,
+        .upload-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Sarabun';
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            background: var(--harvard-crimson);
+            color: white;
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #888;
+        }
+
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(20px);
             }
 
             to {
@@ -253,14 +282,20 @@
             }
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
                 gap: 10px;
-            }
-
-            .form-row {
-                flex-direction: column;
             }
         }
     </style>
@@ -273,142 +308,128 @@
         <nav class="nav-menu">
             <ul>
                 <li><a href="index.html">หน้าหลัก</a></li>
-                <li><a href="schedule.html">กำหนดการ</a></li>
-                <li><a href="documents.html"
-                        style="color: var(--gold-accent); border-bottom: 1px solid var(--gold-accent);">คลังเอกสาร</a>
-                </li>
+                <li><a href="documents.html" style="color: var(--gold-accent);">คลังเอกสาร</a></li>
                 <li><a href="gallery.html">ภาพกิจกรรม</a></li>
             </ul>
         </nav>
     </header>
 
+    <div class="admin-trigger" onclick="openAdminModal()" title="Admin Upload">
+        <i class="fas fa-folder-plus"></i>
+    </div>
+
     <div class="container">
-
-        <section class="admin-panel">
-            <div>
-                <h3 style="margin-bottom: 10px;">เจ้าหน้าที่: อัปโหลดเอกสาร</h3>
-                <div class="pin-input-group" id="loginSection">
-                    <input type="password" id="pinInput" placeholder="กรอก PIN">
-                    <button onclick="checkPin()" class="btn-login">เข้าสู่ระบบ</button>
-                </div>
-                <p id="loginMsg" style="color: red; font-size: 0.9rem; margin-top: 5px;"></p>
-            </div>
-
-            <div id="uploadForm">
-                <h4 style="margin-bottom: 15px; color: var(--harvard-crimson);">เพิ่มเอกสารใหม่</h4>
-                <div class="form-row">
-                    <input type="text" id="docTitle" placeholder="ชื่อเอกสาร (เช่น กำหนดการ, ใบสมัคร)" style="flex: 2;">
-                    <select id="docType" style="flex: 1;">
-                        <option value="pdf">PDF Document</option>
-                        <option value="word">Word Document</option>
-                        <option value="slide">Presentation (PPT)</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <input type="file" id="docFile" style="flex: 2;">
-                    <button onclick="addDocument()" class="btn-post">อัปโหลดไฟล์</button>
-                </div>
-            </div>
-        </section>
-
         <h1 class="page-title">คลังเอกสารและสื่อสิ่งพิมพ์</h1>
-
         <div class="doc-grid" id="docGrid">
-
-            <div class="doc-card">
-                <div>
-                    <span class="file-type-badge type-pdf">PDF Document</span>
-                    <h3 class="doc-title">กำหนดการเดินทางฉบับสมบูรณ์</h3>
-                    <p class="doc-meta">อัปโหลดเมื่อ: 18 พ.ย. 68 • ขนาด 1.2 MB</p>
-                </div>
-                <a href="#" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
-            </div>
-
-            <div class="doc-card">
-                <div>
-                    <span class="file-type-badge type-slide">PowerPoint</span>
-                    <h3 class="doc-title">Slide บรรยาย: Smart Building 101</h3>
-                    <p class="doc-meta">โดย ดร.วิศวะ • ขนาด 15 MB</p>
-                </div>
-                <a href="#" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
-            </div>
-
-            <div class="doc-card">
-                <div>
-                    <span class="file-type-badge type-word">Word Doc</span>
-                    <h3 class="doc-title">แบบฟอร์มประเมินความพึงพอใจ</h3>
-                    <p class="doc-meta">สำหรับผู้เข้าร่วมโครงการ</p>
-                </div>
-                <a href="#" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
-            </div>
-
         </div>
     </div>
 
-    <script>
-        // 1. Check PIN (1212312121)
-        function checkPin() {
-            const pin = document.getElementById('pinInput').value;
-            const correctPin = "1212312121";
-            const form = document.getElementById('uploadForm');
-            const msg = document.getElementById('loginMsg');
-            const loginSection = document.getElementById('loginSection');
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeAdminModal()">&times;</button>
 
-            if (pin === correctPin) {
-                form.style.display = 'block';
-                msg.style.color = "green";
-                msg.innerText = "Access Granted: Ready to upload.";
-                loginSection.style.display = "none";
+            <div id="authSection" class="auth-section active">
+                <h3 style="margin-bottom: 20px; text-align: center; color: var(--harvard-crimson);">Admin Login</h3>
+                <input type="password" id="pinInput" placeholder="กรอก PIN (1212312121)">
+                <button onclick="checkPin()" class="btn-full">เข้าสู่ระบบ</button>
+                <p id="loginMsg" style="color: red; font-size: 0.85rem; margin-top: 10px; text-align: center;"></p>
+            </div>
+
+            <div id="uploadSection" class="upload-section">
+                <h3 style="margin-bottom: 15px; color: var(--harvard-crimson);">เพิ่มเอกสารใหม่</h3>
+                <div class="form-group">
+                    <label>ชื่อเอกสาร</label>
+                    <input type="text" id="docTitle">
+                </div>
+                <div class="form-group">
+                    <label>ประเภทไฟล์</label>
+                    <select id="docType">
+                        <option value="pdf">PDF Document</option>
+                        <option value="word">Word Document</option>
+                        <option value="slide">PowerPoint</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>เลือกไฟล์</label>
+                    <input type="file" id="docFile">
+                </div>
+                <button onclick="saveDoc()" class="btn-full">บันทึกเอกสาร</button>
+            </div>
+        </div>
+    </div>
+    <script src="translator.js"></script>
+    <script>
+        const DB_KEY = 'docs_db_v1';
+        let docData = [];
+
+        window.onload = function () {
+            const saved = localStorage.getItem(DB_KEY);
+            if (saved) {
+                docData = JSON.parse(saved);
             } else {
-                msg.style.color = "red";
-                msg.innerText = "รหัส PIN ไม่ถูกต้อง";
+                docData = [
+                    { id: 1, title: "กำหนดการเดินทาง", type: "pdf", date: "18 พ.ย. 68" },
+                    { id: 2, title: "Slide Smart Building", type: "slide", date: "19 พ.ย. 68" }
+                ];
+            }
+            renderDocs();
+        };
+
+        function renderDocs() {
+            const grid = document.getElementById('docGrid');
+            grid.innerHTML = '';
+
+            docData.forEach(doc => {
+                let badgeClass = "type-pdf"; let badgeText = "PDF";
+                if (doc.type === 'word') { badgeClass = "type-word"; badgeText = "Word"; }
+                else if (doc.type === 'slide') { badgeClass = "type-slide"; badgeText = "PPT"; }
+
+                const html = `
+                    <div class="doc-card">
+                        <div>
+                            <span class="file-type-badge ${badgeClass}">${badgeText}</span>
+                            <h3 class="doc-title">${doc.title}</h3>
+                            <p class="doc-meta">วันที่: ${doc.date} • โดย Admin</p>
+                        </div>
+                        <a href="#" class="download-btn" onclick="alert('หมายเหตุ: ไฟล์นี้เป็นข้อมูลจำลอง (Demo) จึงไม่มีไฟล์จริงให้ดาวน์โหลด')">ดาวน์โหลด &darr;</a>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; resetForms(); }
+        function resetForms() { document.getElementById('authSection').classList.add('active'); document.getElementById('uploadSection').classList.remove('active'); document.getElementById('pinInput').value = ''; }
+
+        function checkPin() {
+            if (document.getElementById('pinInput').value === "1212312121") {
+                document.getElementById('authSection').classList.remove('active');
+                document.getElementById('uploadSection').classList.add('active');
+            } else {
+                document.getElementById('loginMsg').innerText = "PIN ผิด";
             }
         }
 
-        // 2. Add Document Function
-        function addDocument() {
+        function saveDoc() {
             const title = document.getElementById('docTitle').value;
             const type = document.getElementById('docType').value;
-            const fileInput = document.getElementById('docFile');
+            if (!title) { alert("กรุณาใส่ชื่อเอกสาร"); return; }
 
-            if (title === "" || fileInput.files.length === 0) {
-                alert("กรุณาระบุชื่อเอกสารและเลือกไฟล์");
-                return;
-            }
+            const newDoc = {
+                id: Date.now(),
+                title: title,
+                type: type,
+                date: new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })
+            };
 
-            // Setup Class for Badge
-            let badgeClass = "type-pdf";
-            let badgeText = "PDF Document";
-            if (type === 'word') { badgeClass = "type-word"; badgeText = "Word Document"; }
-            else if (type === 'slide') { badgeClass = "type-slide"; badgeText = "PowerPoint"; }
-
-            // Create Fake URL
-            const fileUrl = URL.createObjectURL(fileInput.files[0]);
-            const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
-
-            // HTML Template
-            const newDocHTML = `
-                <div class="doc-card">
-                    <div>
-                        <span class="file-type-badge ${badgeClass}">${badgeText}</span> <span class="new-badge">NEW</span>
-                        <h3 class="doc-title">${title}</h3>
-                        <p class="doc-meta">อัปโหลดเมื่อ: ${today} • โดย Admin</p>
-                    </div>
-                    <a href="${fileUrl}" download="${fileInput.files[0].name}" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
-                </div>
-            `;
-
-            // Insert to Grid
-            const grid = document.getElementById('docGrid');
-            grid.insertAdjacentHTML('afterbegin', newDocHTML);
-
-            // Reset
-            document.getElementById('docTitle').value = "";
-            document.getElementById('docFile').value = "";
-            alert("อัปโหลดเอกสารเรียบร้อย!");
+            docData.unshift(newDoc);
+            localStorage.setItem(DB_KEY, JSON.stringify(docData));
+            renderDocs();
+            closeAdminModal();
+            alert("เพิ่มรายการเอกสารเรียบร้อย (บันทึกชื่อไฟล์ไว้ถาวร)");
         }
     </script>
-
 </body>
 
 </html>

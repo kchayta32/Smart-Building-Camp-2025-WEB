@@ -11,16 +11,16 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        /* --- ธีมเดิม (Harvard Style) --- */
+        /* --- Theme Variables --- */
         :root {
             --harvard-crimson: #004aad;
             --harvard-black: #101820;
             --gold-accent: #f97825;
             --text-white: #ffffff;
             --bg-light: #f4f6f8;
-            --bg-section: #ffffff;
         }
 
         * {
@@ -38,12 +38,11 @@
 
         h1,
         h2,
-        h3,
-        .brand-font {
+        h3 {
             font-family: 'Merriweather', serif;
         }
 
-        /* --- HEADER (เหมือนหน้าแรก) --- */
+        /* Header */
         header {
             background-color: var(--harvard-crimson);
             color: var(--text-white);
@@ -72,98 +71,20 @@
             color: white;
             text-decoration: none;
             font-size: 0.9rem;
+            transition: 0.3s;
         }
 
         .nav-menu a:hover {
-            text-decoration: underline;
             color: var(--gold-accent);
         }
 
-        /* --- CONTAINER --- */
+        /* Container & Grid */
         .container {
             max-width: 1200px;
             margin: 40px auto;
             padding: 0 20px;
         }
 
-        /* --- ADMIN PANEL (ส่วนใส่ PIN) --- */
-        .admin-panel {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 5px solid var(--harvard-black);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            margin-bottom: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .pin-input-group {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        input[type="password"],
-        input[type="text"],
-        input[type="file"] {
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-family: 'Sarabun', sans-serif;
-        }
-
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .btn-login {
-            background-color: var(--harvard-black);
-            color: white;
-        }
-
-        .btn-login:hover {
-            background-color: #333;
-        }
-
-        .btn-post {
-            background-color: var(--harvard-crimson);
-            color: white;
-        }
-
-        .btn-post:hover {
-            background-color: #7a1322;
-        }
-
-        /* Hidden Upload Form */
-        #uploadForm {
-            display: none;
-            /* ซ่อนไว้ก่อน */
-            border-top: 1px solid #eee;
-            padding-top: 20px;
-            margin-top: 10px;
-        }
-
-        #uploadForm.active {
-            display: block;
-            /* แสดงเมื่อใส่ PIN ถูก */
-            animation: fadeIn 0.5s;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        /* --- GALLERY GRID --- */
         .gallery-title {
             text-align: center;
             margin-bottom: 40px;
@@ -184,6 +105,8 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s ease;
             position: relative;
+            cursor: pointer;
+            animation: fadeIn 0.5s;
         }
 
         .gallery-card:hover {
@@ -192,7 +115,7 @@
         }
 
         .img-wrapper {
-            height: 200px;
+            height: 220px;
             overflow: hidden;
             position: relative;
         }
@@ -208,6 +131,21 @@
             transform: scale(1.05);
         }
 
+        /* Badges */
+        .badge-album {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .card-content {
             padding: 20px;
         }
@@ -218,34 +156,223 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 5px;
             display: block;
+            margin-bottom: 5px;
         }
 
         .card-title {
             font-size: 1.1rem;
             font-weight: 700;
-            margin-bottom: 0;
             line-height: 1.4;
         }
 
-        /* Badge สำหรับ New Post */
-        .badge-new {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: var(--harvard-crimson);
-            color: white;
-            padding: 3px 10px;
-            font-size: 0.7rem;
-            border-radius: 20px;
-            z-index: 10;
+        /* --- Lightbox (Viewer) --- */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            display: none;
+            /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
-        @keyframes fadeIn {
+        .lightbox.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        .lightbox-img {
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-caption {
+            color: white;
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+
+        .lightbox-counter {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .lb-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .lb-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .lb-nav:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .lb-prev {
+            left: 20px;
+        }
+
+        .lb-next {
+            right: 20px;
+        }
+
+        /* --- Admin Icon --- */
+        .admin-trigger {
+            position: fixed;
+            top: 90px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 900;
+            color: #888;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        .admin-trigger:hover {
+            background: var(--harvard-crimson);
+            color: white;
+            border-color: var(--harvard-crimson);
+        }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+            animation: slideUp 0.3s;
+        }
+
+        .auth-section,
+        .upload-section {
+            display: none;
+        }
+
+        .auth-section.active,
+        .upload-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Sarabun';
+        }
+
+        /* Radio Group for Upload Type */
+        .type-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        input[type="radio"] {
+            width: auto;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .btn-crimson {
+            background: var(--harvard-crimson);
+            color: white;
+        }
+
+        .btn-crimson:hover {
+            background: #003380;
+        }
+
+        .btn-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #888;
+        }
+
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(20px);
             }
 
             to {
@@ -254,11 +381,17 @@
             }
         }
 
-        @media (max-width: 768px) {
-            .form-row {
-                flex-direction: column;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
             }
 
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
             header {
                 flex-direction: column;
                 gap: 10px;
@@ -275,138 +408,283 @@
             <ul>
                 <li><a href="index.html">กลับหน้าหลัก</a></li>
                 <li><a href="documents.html">คลังเอกสาร</a></li>
+                <li><a href="teamboard.html">กระดานจัดทีม</a></li>
             </ul>
         </nav>
     </header>
 
+    <div class="admin-trigger" onclick="openAdminModal()" title="Admin Upload">
+        <i class="fas fa-cog"></i>
+    </div>
+
     <div class="container">
-
-        <section class="admin-panel">
-            <div>
-                <h3 style="margin-bottom: 10px;">สำหรับเจ้าหน้าที่ (Admin Upload)</h3>
-                <div class="pin-input-group" id="loginSection">
-                    <input type="password" id="pinInput" placeholder="กรอก PIN เพื่อเพิ่มรูป...">
-                    <button onclick="checkPin()" class="btn-login">ปลดล็อก</button>
-                </div>
-                <p id="loginMsg" style="color: red; font-size: 0.9rem; margin-top: 5px;"></p>
-            </div>
-
-            <div id="uploadForm">
-                <h4 style="margin-bottom: 15px; color: var(--harvard-crimson);">เพิ่มอัลบั้มกิจกรรมใหม่</h4>
-                <div class="form-row">
-                    <input type="text" id="imgTitle" placeholder="ชื่อกิจกรรม/อัลบั้ม" style="flex: 2;">
-                    <input type="date" id="imgDate" style="flex: 1;">
-                </div>
-                <div class="form-row">
-                    <input type="file" id="imgFile" accept="image/*" style="flex: 2;">
-                    <button onclick="addPhoto()" class="btn-post">โพสต์ลงหน้าเว็บ</button>
-                </div>
-            </div>
-        </section>
-
         <h1 class="gallery-title">ภาพบรรยากาศกิจกรรม</h1>
-
         <div class="gallery-grid" id="galleryGrid">
-
-            <div class="gallery-card">
-                <div class="img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop"
-                        alt="Workshop">
-                </div>
-                <div class="card-content">
-                    <span class="card-date">24 พ.ย. 2568</span>
-                    <h3 class="card-title">พิธีเปิดโครงการ และบรรยายพิเศษ Smart City</h3>
-                </div>
-            </div>
-
-            <div class="gallery-card">
-                <div class="img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop"
-                        alt="Coding">
-                </div>
-                <div class="card-content">
-                    <span class="card-date">25 พ.ย. 2568</span>
-                    <h3 class="card-title">Workshop: การเขียนโปรแกรมควบคุมระบบ IoT</h3>
-                </div>
-            </div>
-
-            <div class="gallery-card">
-                <div class="img-wrapper">
-                    <img src="https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=1000&auto=format&fit=crop"
-                        alt="Building">
-                </div>
-                <div class="card-content">
-                    <span class="card-date">26 พ.ย. 2568</span>
-                    <h3 class="card-title">ดูงานสถานที่จริง ระบบอาคารอัจฉริยะ</h3>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <script>
-        // 1. ฟังก์ชันตรวจสอบ PIN
-        function checkPin() {
-            const pin = document.getElementById('pinInput').value;
-            const correctPin = "1212312121"; // PIN ตามที่กำหนด
-            const form = document.getElementById('uploadForm');
-            const msg = document.getElementById('loginMsg');
-            const loginSection = document.getElementById('loginSection');
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal-content">
+            <button class="btn-close" onclick="closeAdminModal()">&times;</button>
 
-            if (pin === correctPin) {
-                form.classList.add('active'); // แสดงฟอร์ม
-                msg.style.color = "green";
-                msg.innerText = "เข้าสู่ระบบเรียบร้อย! คุณสามารถเพิ่มรูปภาพได้แล้ว";
-                loginSection.style.display = "none"; // ซ่อนช่องใส่ PIN
+            <div id="authSection" class="auth-section active">
+                <h3 style="margin-bottom: 20px; text-align: center; color: var(--harvard-crimson);">Admin Login</h3>
+                <div class="form-group">
+                    <input type="password" id="pinInput" placeholder="กรอก PIN ...">
+                </div>
+                <button onclick="checkPin()" class="btn-full btn-crimson">เข้าสู่ระบบ</button>
+                <p id="loginMsg" style="color: red; font-size: 0.85rem; margin-top: 10px; text-align: center;"></p>
+            </div>
+
+            <div id="uploadSection" class="upload-section">
+                <h3 style="margin-bottom: 15px; color: var(--harvard-crimson);">อัปโหลดรูปภาพ</h3>
+
+                <div class="form-group">
+                    <label>รูปแบบการอัปโหลด</label>
+                    <div class="type-selector">
+                        <label class="radio-label">
+                            <input type="radio" name="uploadType" value="single" checked onchange="toggleUploadType()">
+                            รูปเดี่ยว
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="uploadType" value="album" onchange="toggleUploadType()">
+                            สร้างอัลบั้ม (หลายรูป)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>ชื่อกิจกรรม / อัลบั้ม</label>
+                    <input type="text" id="imgTitle" placeholder="เช่น พิธีเปิด, กิจกรรมกลุ่มสัมพันธ์">
+                </div>
+                <div class="form-group">
+                    <label>วันที่</label>
+                    <input type="date" id="imgDate">
+                </div>
+                <div class="form-group">
+                    <label id="fileLabel">เลือกไฟล์รูปภาพ</label>
+                    <input type="file" id="imgFile" accept="image/*">
+                    <small style="color:#666; font-size:0.8rem;">* รองรับไฟล์ .jpg, .png (จำกัดขนาดรวมไม่เกิน 3MB สำหรับ
+                        Demo)</small>
+                </div>
+                <button onclick="savePhoto()" class="btn-full btn-crimson">บันทึกข้อมูล</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="lightbox" id="lightbox">
+        <span class="lb-close" onclick="closeLightbox()">&times;</span>
+        <div class="lb-nav lb-prev" onclick="changeImage(-1)">&#10094;</div>
+        <div class="lb-nav lb-next" onclick="changeImage(1)">&#10095;</div>
+
+        <img src="" class="lightbox-img" id="lbImage">
+        <div class="lightbox-caption" id="lbCaption"></div>
+        <div class="lightbox-counter" id="lbCounter"></div>
+    </div>
+
+    <script>
+        const DB_KEY = 'gallery_db_v2';
+        let galleryData = [];
+        let currentViewerImages = []; // Images currently showing in lightbox
+        let currentViewerIndex = 0;
+
+        // Initial Load
+        window.onload = function () {
+            // Set Default Date
+            document.getElementById('imgDate').valueAsDate = new Date();
+
+            const saved = localStorage.getItem(DB_KEY);
+            if (saved) {
+                galleryData = JSON.parse(saved);
             } else {
-                msg.style.color = "red";
-                msg.innerText = "รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่";
+                // Mock Data
+                galleryData = [
+                    {
+                        id: 1, type: 'single', title: "พิธีเปิดโครงการ", date: "2025-11-24",
+                        images: ["https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600"]
+                    },
+                    {
+                        id: 2, type: 'album', title: "บรรยากาศ Workshop (อัลบั้ม)", date: "2025-11-25",
+                        images: [
+                            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600",
+                            "https://images.unsplash.com/photo-1504384308090-c54be3855833?w=600",
+                            "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600"
+                        ]
+                    }
+                ];
+            }
+            renderGallery();
+        };
+
+        function renderGallery() {
+            const grid = document.getElementById('galleryGrid');
+            grid.innerHTML = '';
+
+            const sorted = [...galleryData].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sorted.forEach((item, index) => {
+                const dateStr = new Date(item.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+                const coverImg = item.images[0];
+
+                // Check if album
+                let badgeHTML = '';
+                if (item.type === 'album' && item.images.length > 1) {
+                    badgeHTML = `<div class="badge-album"><i class="fas fa-images"></i> ${item.images.length} รูป</div>`;
+                }
+
+                const html = `
+                    <div class="gallery-card" onclick="openLightbox(${item.id})">
+                        <div class="img-wrapper">
+                            <img src="${coverImg}" alt="${item.title}">
+                            ${badgeHTML}
+                        </div>
+                        <div class="card-content">
+                            <span class="card-date">${dateStr}</span>
+                            <h3 class="card-title">${item.title}</h3>
+                        </div>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // --- Admin Logic ---
+        function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+
+        function checkPin() {
+            if (document.getElementById('pinInput').value === "1212312121") {
+                document.getElementById('authSection').classList.remove('active');
+                document.getElementById('uploadSection').classList.add('active');
+            } else {
+                document.getElementById('loginMsg').innerText = "รหัส PIN ไม่ถูกต้อง";
             }
         }
 
-        // 2. ฟังก์ชันเพิ่มการ์ดรูปลงใน Grid
-        function addPhoto() {
+        function toggleUploadType() {
+            const type = document.querySelector('input[name="uploadType"]:checked').value;
+            const fileInput = document.getElementById('imgFile');
+
+            if (type === 'album') {
+                fileInput.setAttribute('multiple', ''); // Allow multiple files
+                document.getElementById('fileLabel').innerText = "เลือกรูปภาพหลายรูป (กด Ctrl ค้างเพื่อเลือก)";
+            } else {
+                fileInput.removeAttribute('multiple');
+                document.getElementById('fileLabel').innerText = "เลือกไฟล์รูปภาพ";
+            }
+        }
+
+        async function savePhoto() {
             const title = document.getElementById('imgTitle').value;
             const date = document.getElementById('imgDate').value;
             const fileInput = document.getElementById('imgFile');
+            const type = document.querySelector('input[name="uploadType"]:checked').value;
 
-            if (title === "" || fileInput.files.length === 0) {
-                alert("กรุณาใส่ชื่อกิจกรรมและเลือกรูปภาพ");
+            if (!title || !date || fileInput.files.length === 0) {
+                alert("กรุณากรอกข้อมูลให้ครบ"); return;
+            }
+
+            // Process Files to Base64
+            const files = Array.from(fileInput.files);
+
+            // Check size limit (Basic check)
+            let totalSize = 0;
+            files.forEach(f => totalSize += f.size);
+            if (totalSize > 3000000) { // 3MB Limit
+                alert("ขนาดไฟล์รวมกันใหญ่เกินไป (Limit 3MB) กรุณาลดจำนวนหรือขนาดรูป");
                 return;
             }
 
-            // สร้าง URL จำลองจากไฟล์ที่เลือก (เพื่อให้แสดงผลได้ทันทีโดยไม่ต้องมี Server จริง)
-            const imgUrl = URL.createObjectURL(fileInput.files[0]);
+            const promises = files.map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = e => reject(e);
+                    reader.readAsDataURL(file);
+                });
+            });
 
-            // แปลงวันที่ให้สวยงาม
-            const dateObj = new Date(date || new Date());
-            const dateStr = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+            try {
+                const base64Images = await Promise.all(promises);
 
-            // สร้าง HTML ของการ์ดใหม่
-            const newCardHTML = `
-                <div class="gallery-card">
-                    <span class="badge-new">NEW</span>
-                    <div class="img-wrapper">
-                        <img src="${imgUrl}" alt="${title}">
-                    </div>
-                    <div class="card-content">
-                        <span class="card-date">${dateStr}</span>
-                        <h3 class="card-title">${title}</h3>
-                    </div>
-                </div>
-            `;
+                const newItem = {
+                    id: Date.now(),
+                    type: type, // 'single' or 'album'
+                    title: title,
+                    date: date,
+                    images: base64Images // Array of Base64 strings
+                };
 
-            // แทรกการ์ดใหม่เข้าไปเป็นตัวแรกของ Grid
-            const grid = document.getElementById('galleryGrid');
-            grid.insertAdjacentHTML('afterbegin', newCardHTML);
+                galleryData.unshift(newItem);
 
-            // Reset ฟอร์ม
-            document.getElementById('imgTitle').value = "";
-            document.getElementById('imgFile').value = "";
-            alert("โพสต์กิจกรรมเรียบร้อยแล้ว!");
+                // Try to save (Handling Quota Exceeded)
+                try {
+                    localStorage.setItem(DB_KEY, JSON.stringify(galleryData));
+                    renderGallery();
+                    closeAdminModal();
+                    alert("บันทึกเรียบร้อย!");
+                    // Reset Form
+                    document.getElementById('imgTitle').value = '';
+                    document.getElementById('imgFile').value = '';
+                } catch (e) {
+                    alert("ความจำเต็ม (Local Storage Full)! ไม่สามารถบันทึกเพิ่มได้ กรุณาลบข้อมูลเก่าออกบ้าง");
+                    galleryData.shift(); // Rollback
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("เกิดข้อผิดพลาดในการอ่านไฟล์");
+            }
+        }
+
+        // --- Lightbox Logic ---
+        function openLightbox(id) {
+            const item = galleryData.find(i => i.id === id);
+            if (!item) return;
+
+            currentViewerImages = item.images;
+            currentViewerIndex = 0;
+
+            updateLightboxContent(item.title);
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').classList.remove('active');
+        }
+
+        function changeImage(direction) {
+            currentViewerIndex += direction;
+            // Loop logic
+            if (currentViewerIndex >= currentViewerImages.length) currentViewerIndex = 0;
+            if (currentViewerIndex < 0) currentViewerIndex = currentViewerImages.length - 1;
+
+            updateLightboxContent();
+        }
+
+        function updateLightboxContent(titleOverride) {
+            const img = document.getElementById('lbImage');
+            const caption = document.getElementById('lbCaption');
+            const counter = document.getElementById('lbCounter');
+
+            img.src = currentViewerImages[currentViewerIndex];
+
+            // If title is passed (first open), use it. Otherwise keep current title logic if needed, 
+            // but here we just show the image count.
+            if (titleOverride) caption.innerText = titleOverride;
+
+            if (currentViewerImages.length > 1) {
+                counter.innerText = `รูปที่ ${currentViewerIndex + 1} / ${currentViewerImages.length}`;
+                document.querySelector('.lb-prev').style.display = 'block';
+                document.querySelector('.lb-next').style.display = 'block';
+            } else {
+                counter.innerText = '';
+                document.querySelector('.lb-prev').style.display = 'none';
+                document.querySelector('.lb-next').style.display = 'none';
+            }
         }
     </script>
-
+    <script src="translator.js"></script>
 </body>
 
 </html>
