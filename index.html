@@ -15,13 +15,15 @@
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
-            --harvard-crimson: #A51C30;
+            --harvard-crimson: #004aad;
             /* สีแดงโทน Harvard */
-            --harvard-black: #1e1e1e;
-            --gold-accent: #c49a6c;
+            --harvard-black: #101820;
+            --gold-accent: #f97825;
             /* สีทองสำหรับเน้นคำ */
             --text-white: #ffffff;
-            --bg-light: #f8f9fa;
+            --bg-light: #f4f6f8;
+            /* ปรับพื้นหลังให้ออกเทาฟ้าจางๆ นิดหน่อยเพื่อให้เข้าธีม */
+            --bg-section: #ffffff;
         }
 
         * {
@@ -76,12 +78,24 @@
             text-transform: uppercase;
             opacity: 0.9;
             font-family: 'Sarabun', sans-serif;
+
+            margin-bottom: 15px;
+            /* ปรับตัวเลขได้ตามชอบ ยิ่งมากยิ่งห่าง (เช่น 10px, 20px) */
+            display: block;
+            /* เพิ่มเพื่อความชัวร์ว่ามันจะกินพื้นที่เต็มบรรทัด */
         }
 
         .project-name {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
+            /* ลดขนาดลงนิดหน่อยเพื่อให้พอดี header */
             font-weight: 700;
             font-family: 'Merriweather', serif;
+            display: block;
+            /* เพื่อให้มันเป็นกล่องข้อความที่ชัดเจน */
+            line-height: 1.3;
+            /* สำคัญ: ปรับระยะห่างระหว่างบรรทัดให้ดูไม่ห่างเกินไป */
+            margin-top: 5px;
+            /* เว้นระยะห่างจากชื่อคณะนิดหน่อย */
         }
 
         .nav-menu ul {
@@ -270,29 +284,182 @@
         }
 
         /* Responsive */
+        /* --- Responsive Rules (Mobile) --- */
         @media (max-width: 768px) {
             header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
+                /* ให้ Header ยืดหยุ่นและอนุญาตให้เมนูตกลงมาบรรทัดล่างได้เมื่อกดเปิด */
+                flex-wrap: wrap;
+                justify-content: space-between;
+                /* ดันของไปชิดซ้าย-ขวา */
+                align-items: center;
+                /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+                padding: 15px 20px;
+            }
+
+            .logo-area {
+                /* บังคับชิดซ้าย */
+                text-align: left;
+
+                /* จำกัดความกว้างไว้แค่ 80% เพื่อเหลือที่ให้ปุ่ม Hamburger ไม่โดนเบียด */
+                max-width: 80%;
+
+                /* ลบ margin-bottom ที่อาจจะดันปุ่มลงไป */
+                margin-bottom: 0;
+            }
+
+            .faculty-name {
+                display: block;
+                margin-bottom: 5px;
+                /* เว้นห่างจากชื่อโครงการนิดเดียวพอ */
+            }
+
+            .project-name {
+                font-size: 1rem;
+                /* ลดขนาดฟอนต์ชื่อโครงการในมือถือนิดหน่อยกันล้น */
+                line-height: 1.3;
+            }
+
+            .hamburger {
+                display: flex;
+                /* แสดงปุ่ม Hamburger */
+                margin-left: auto;
+                /* ดันตัวเองไปขวาสุดเสมอ (เผื่อ Logo สั้น) */
+            }
+
+            .nav-menu {
+                display: none;
+                /* ซ่อนเมนูไว้ก่อน */
+                width: 100%;
+                /* เมื่อเปิดแล้วให้กินพื้นที่เต็มความกว้าง (ตกมาบรรทัดใหม่) */
+                margin-top: 20px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-menu.active {
+                display: block;
+                animation: slideDown 0.3s ease-out;
             }
 
             .nav-menu ul {
-                gap: 15px;
-                font-size: 0.9rem;
+                flex-direction: column;
+                gap: 0;
+                width: 100%;
+            }
+
+            .nav-menu a {
+                display: block;
+                padding: 15px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                font-size: 1rem;
+                text-align: center;
+                /* ให้ลิงก์ในเมนูอยู่ตรงกลางสวยๆ */
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* ปรับ Hero Section ให้ลงมาต่ำหน่อย เพราะ Header บนมือถืออาจจะสูงขึ้น */
+            .hero {
+                padding-top: 110px;
             }
 
             .hero h1 {
-                font-size: 3rem;
+                font-size: 2.8rem;
+            }
+        }
+
+        /* --- Hamburger Menu Style --- */
+        .hamburger {
+            display: none;
+            /* ซ่อนบน PC */
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-white);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* --- Responsive Rules --- */
+        @media (max-width: 768px) {
+            header {
+                flex-wrap: wrap;
+                /* อนุญาตให้เนื้อหาตกบรรทัดได้ */
+                padding: 15px 20px;
             }
 
-            .cta-group {
-                flex-direction: column;
+            .logo-area {
+                max-width: 80%;
+                /* ให้พื้นที่โลโก้ไม่เบียดปุ่มเกินไป */
             }
 
-            .btn {
+            .hamburger {
+                display: flex;
+                /* โชว์ปุ่มบนมือถือ */
+            }
+
+            .nav-menu {
+                display: none;
+                /* ซ่อนเมนูไว้ก่อน */
                 width: 100%;
-                justify-content: center;
+                margin-top: 20px;
+                border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .nav-menu.active {
+                display: block;
+                /* แสดงเมนูเมื่อมี class 'active' */
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu ul {
+                flex-direction: column;
+                /* เรียงเมนูเป็นแนวตั้ง */
+                gap: 0;
+                width: 100%;
+            }
+
+            .nav-menu a {
+                display: block;
+                padding: 15px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                font-size: 1rem;
+            }
+
+            /* Animation เล็กน้อยตอนเปิดเมนู */
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* ปรับ Hero Section ให้ไม่โดน Header บังบนมือถือ */
+            .hero {
+                padding-top: 100px;
+            }
+
+            .hero h1 {
+                font-size: 2.8rem;
             }
         }
     </style>
@@ -303,11 +470,21 @@
     <header>
         <div class="logo-area">
             <span class="faculty-name">FACULTY OF ENGINEERING AND INDUSTRIAL TECHNOLOGY</span>
-            <span class="project-name">Smart Building Camp 2025</span>
+            <span class="project-name">
+                Bilateral Academic Workshop<br>
+                on Smart Building Model Camp 2025
+            </span>
         </div>
-        <nav class="nav-menu">
+
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <nav class="nav-menu" id="mobileMenu">
             <ul>
-                <li><a href="#">หน้าหลัก</a></li>
+                <li><a href="index.html">หน้าหลัก</a></li>
                 <li><a href="schedule.html">กำหนดการ</a></li>
                 <li><a href="documents.html">คลังเอกสาร</a></li>
                 <li><a href="gallery.html">ภาพกิจกรรม</a></li>
@@ -375,7 +552,12 @@
     <footer>
         <p>&copy; 2025 Smart Building Model Camp. Faculty of Engineering and Industrial Technology.</p>
     </footer>
-
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+    </script>
 </body>
 
 </html>
