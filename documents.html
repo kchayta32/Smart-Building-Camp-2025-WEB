@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Library - Smart Building Camp 2025</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- Theme Setup --- */
+        :root {
+            --harvard-crimson: #A51C30;
+            --harvard-black: #1e1e1e;
+            --gold-accent: #c49a6c;
+            --text-white: #ffffff;
+            --bg-light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--harvard-black);
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--harvard-crimson);
+            color: var(--text-white);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .nav-menu ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--gold-accent);
+        }
+
+        /* --- Main Container --- */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--harvard-crimson);
+            font-size: 2.5rem;
+        }
+
+        /* --- Admin Panel (Copy Style) --- */
+        .admin-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--harvard-black);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        .pin-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input,
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-login {
+            background-color: var(--harvard-black);
+            color: white;
+        }
+
+        .btn-post {
+            background-color: var(--harvard-crimson);
+            color: white;
+        }
+
+        #uploadForm {
+            display: none;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: 10px;
+            animation: fadeIn 0.5s;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* --- Document Grid --- */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .doc-card {
+            background: white;
+            border: 1px solid #eee;
+            padding: 25px;
+            border-radius: 6px;
+            border-top: 4px solid var(--harvard-crimson);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 200px;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-type-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .type-pdf {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .type-word {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+        }
+
+        .type-slide {
+            background-color: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ffe0b2;
+        }
+
+        .doc-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .doc-meta {
+            font-size: 0.85rem;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        .download-btn {
+            align-self: flex-start;
+            color: var(--harvard-crimson);
+            font-weight: 600;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 2px;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            border-bottom: 2px solid var(--harvard-crimson);
+        }
+
+        .new-badge {
+            background: var(--gold-accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="project-name">Smart Building Camp 2025</div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">หน้าหลัก</a></li>
+                <li><a href="schedule.html">กำหนดการ</a></li>
+                <li><a href="documents.html"
+                        style="color: var(--gold-accent); border-bottom: 1px solid var(--gold-accent);">คลังเอกสาร</a>
+                </li>
+                <li><a href="gallery.html">ภาพกิจกรรม</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <section class="admin-panel">
+            <div>
+                <h3 style="margin-bottom: 10px;">เจ้าหน้าที่: อัปโหลดเอกสาร</h3>
+                <div class="pin-input-group" id="loginSection">
+                    <input type="password" id="pinInput" placeholder="กรอก PIN (1212312121)">
+                    <button onclick="checkPin()" class="btn-login">เข้าสู่ระบบ</button>
+                </div>
+                <p id="loginMsg" style="color: red; font-size: 0.9rem; margin-top: 5px;"></p>
+            </div>
+
+            <div id="uploadForm">
+                <h4 style="margin-bottom: 15px; color: var(--harvard-crimson);">เพิ่มเอกสารใหม่</h4>
+                <div class="form-row">
+                    <input type="text" id="docTitle" placeholder="ชื่อเอกสาร (เช่น กำหนดการ, ใบสมัคร)" style="flex: 2;">
+                    <select id="docType" style="flex: 1;">
+                        <option value="pdf">PDF Document</option>
+                        <option value="word">Word Document</option>
+                        <option value="slide">Presentation (PPT)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="file" id="docFile" style="flex: 2;">
+                    <button onclick="addDocument()" class="btn-post">อัปโหลดไฟล์</button>
+                </div>
+            </div>
+        </section>
+
+        <h1 class="page-title">คลังเอกสารและสื่อสิ่งพิมพ์</h1>
+
+        <div class="doc-grid" id="docGrid">
+
+            <div class="doc-card">
+                <div>
+                    <span class="file-type-badge type-pdf">PDF Document</span>
+                    <h3 class="doc-title">กำหนดการเดินทางฉบับสมบูรณ์</h3>
+                    <p class="doc-meta">อัปโหลดเมื่อ: 18 พ.ย. 68 • ขนาด 1.2 MB</p>
+                </div>
+                <a href="#" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
+            </div>
+
+            <div class="doc-card">
+                <div>
+                    <span class="file-type-badge type-slide">PowerPoint</span>
+                    <h3 class="doc-title">Slide บรรยาย: Smart Building 101</h3>
+                    <p class="doc-meta">โดย ดร.วิศวะ • ขนาด 15 MB</p>
+                </div>
+                <a href="#" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
+            </div>
+
+            <div class="doc-card">
+                <div>
+                    <span class="file-type-badge type-word">Word Doc</span>
+                    <h3 class="doc-title">แบบฟอร์มประเมินความพึงพอใจ</h3>
+                    <p class="doc-meta">สำหรับผู้เข้าร่วมโครงการ</p>
+                </div>
+                <a href="#" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. Check PIN (1212312121)
+        function checkPin() {
+            const pin = document.getElementById('pinInput').value;
+            const correctPin = "1212312121";
+            const form = document.getElementById('uploadForm');
+            const msg = document.getElementById('loginMsg');
+            const loginSection = document.getElementById('loginSection');
+
+            if (pin === correctPin) {
+                form.style.display = 'block';
+                msg.style.color = "green";
+                msg.innerText = "Access Granted: Ready to upload.";
+                loginSection.style.display = "none";
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "รหัส PIN ไม่ถูกต้อง";
+            }
+        }
+
+        // 2. Add Document Function
+        function addDocument() {
+            const title = document.getElementById('docTitle').value;
+            const type = document.getElementById('docType').value;
+            const fileInput = document.getElementById('docFile');
+
+            if (title === "" || fileInput.files.length === 0) {
+                alert("กรุณาระบุชื่อเอกสารและเลือกไฟล์");
+                return;
+            }
+
+            // Setup Class for Badge
+            let badgeClass = "type-pdf";
+            let badgeText = "PDF Document";
+            if (type === 'word') { badgeClass = "type-word"; badgeText = "Word Document"; }
+            else if (type === 'slide') { badgeClass = "type-slide"; badgeText = "PowerPoint"; }
+
+            // Create Fake URL
+            const fileUrl = URL.createObjectURL(fileInput.files[0]);
+            const today = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+
+            // HTML Template
+            const newDocHTML = `
+                <div class="doc-card">
+                    <div>
+                        <span class="file-type-badge ${badgeClass}">${badgeText}</span> <span class="new-badge">NEW</span>
+                        <h3 class="doc-title">${title}</h3>
+                        <p class="doc-meta">อัปโหลดเมื่อ: ${today} • โดย Admin</p>
+                    </div>
+                    <a href="${fileUrl}" download="${fileInput.files[0].name}" class="download-btn">ดาวน์โหลดไฟล์ &darr;</a>
+                </div>
+            `;
+
+            // Insert to Grid
+            const grid = document.getElementById('docGrid');
+            grid.insertAdjacentHTML('afterbegin', newDocHTML);
+
+            // Reset
+            document.getElementById('docTitle').value = "";
+            document.getElementById('docFile').value = "";
+            alert("อัปโหลดเอกสารเรียบร้อย!");
+        }
+    </script>
+
+</body>
+
+</html>
