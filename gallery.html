@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Gallery - Smart Building Camp 2025</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- ธีมเดิม (Harvard Style) --- */
+        :root {
+            --harvard-crimson: #A51C30;
+            --harvard-black: #1e1e1e;
+            --gold-accent: #c49a6c;
+            --text-white: #ffffff;
+            --bg-light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--harvard-black);
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* --- HEADER (เหมือนหน้าแรก) --- */
+        header {
+            background-color: var(--harvard-crimson);
+            color: var(--text-white);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .nav-menu ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu a:hover {
+            text-decoration: underline;
+            color: var(--gold-accent);
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* --- ADMIN PANEL (ส่วนใส่ PIN) --- */
+        .admin-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--harvard-black);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .pin-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input[type="password"],
+        input[type="text"],
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-login {
+            background-color: var(--harvard-black);
+            color: white;
+        }
+
+        .btn-login:hover {
+            background-color: #333;
+        }
+
+        .btn-post {
+            background-color: var(--harvard-crimson);
+            color: white;
+        }
+
+        .btn-post:hover {
+            background-color: #7a1322;
+        }
+
+        /* Hidden Upload Form */
+        #uploadForm {
+            display: none;
+            /* ซ่อนไว้ก่อน */
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: 10px;
+        }
+
+        #uploadForm.active {
+            display: block;
+            /* แสดงเมื่อใส่ PIN ถูก */
+            animation: fadeIn 0.5s;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* --- GALLERY GRID --- */
+        .gallery-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--harvard-crimson);
+            font-size: 2.5rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .gallery-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .img-wrapper {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .gallery-card:hover .img-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-date {
+            font-size: 0.8rem;
+            color: var(--gold-accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        /* Badge สำหรับ New Post */
+        .badge-new {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--harvard-crimson);
+            color: white;
+            padding: 3px 10px;
+            font-size: 0.7rem;
+            border-radius: 20px;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="project-name">Smart Building Camp 2025</div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">กลับหน้าหลัก</a></li>
+                <li><a href="#">คลังเอกสาร</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <section class="admin-panel">
+            <div>
+                <h3 style="margin-bottom: 10px;">สำหรับเจ้าหน้าที่ (Admin Upload)</h3>
+                <div class="pin-input-group" id="loginSection">
+                    <input type="password" id="pinInput" placeholder="กรอก PIN เพื่อเพิ่มรูป...">
+                    <button onclick="checkPin()" class="btn-login">ปลดล็อก</button>
+                </div>
+                <p id="loginMsg" style="color: red; font-size: 0.9rem; margin-top: 5px;"></p>
+            </div>
+
+            <div id="uploadForm">
+                <h4 style="margin-bottom: 15px; color: var(--harvard-crimson);">เพิ่มอัลบั้มกิจกรรมใหม่</h4>
+                <div class="form-row">
+                    <input type="text" id="imgTitle" placeholder="ชื่อกิจกรรม/อัลบั้ม" style="flex: 2;">
+                    <input type="date" id="imgDate" style="flex: 1;">
+                </div>
+                <div class="form-row">
+                    <input type="file" id="imgFile" accept="image/*" style="flex: 2;">
+                    <button onclick="addPhoto()" class="btn-post">โพสต์ลงหน้าเว็บ</button>
+                </div>
+            </div>
+        </section>
+
+        <h1 class="gallery-title">ภาพบรรยากาศกิจกรรม</h1>
+
+        <div class="gallery-grid" id="galleryGrid">
+
+            <div class="gallery-card">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000&auto=format&fit=crop"
+                        alt="Workshop">
+                </div>
+                <div class="card-content">
+                    <span class="card-date">24 พ.ย. 2568</span>
+                    <h3 class="card-title">พิธีเปิดโครงการ และบรรยายพิเศษ Smart City</h3>
+                </div>
+            </div>
+
+            <div class="gallery-card">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000&auto=format&fit=crop"
+                        alt="Coding">
+                </div>
+                <div class="card-content">
+                    <span class="card-date">25 พ.ย. 2568</span>
+                    <h3 class="card-title">Workshop: การเขียนโปรแกรมควบคุมระบบ IoT</h3>
+                </div>
+            </div>
+
+            <div class="gallery-card">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1504384308090-c54be3855833?q=80&w=1000&auto=format&fit=crop"
+                        alt="Building">
+                </div>
+                <div class="card-content">
+                    <span class="card-date">26 พ.ย. 2568</span>
+                    <h3 class="card-title">ดูงานสถานที่จริง ระบบอาคารอัจฉริยะ</h3>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // 1. ฟังก์ชันตรวจสอบ PIN
+        function checkPin() {
+            const pin = document.getElementById('pinInput').value;
+            const correctPin = "1212312121"; // PIN ตามที่กำหนด
+            const form = document.getElementById('uploadForm');
+            const msg = document.getElementById('loginMsg');
+            const loginSection = document.getElementById('loginSection');
+
+            if (pin === correctPin) {
+                form.classList.add('active'); // แสดงฟอร์ม
+                msg.style.color = "green";
+                msg.innerText = "เข้าสู่ระบบเรียบร้อย! คุณสามารถเพิ่มรูปภาพได้แล้ว";
+                loginSection.style.display = "none"; // ซ่อนช่องใส่ PIN
+            } else {
+                msg.style.color = "red";
+                msg.innerText = "รหัส PIN ไม่ถูกต้อง กรุณาลองใหม่";
+            }
+        }
+
+        // 2. ฟังก์ชันเพิ่มการ์ดรูปลงใน Grid
+        function addPhoto() {
+            const title = document.getElementById('imgTitle').value;
+            const date = document.getElementById('imgDate').value;
+            const fileInput = document.getElementById('imgFile');
+
+            if (title === "" || fileInput.files.length === 0) {
+                alert("กรุณาใส่ชื่อกิจกรรมและเลือกรูปภาพ");
+                return;
+            }
+
+            // สร้าง URL จำลองจากไฟล์ที่เลือก (เพื่อให้แสดงผลได้ทันทีโดยไม่ต้องมี Server จริง)
+            const imgUrl = URL.createObjectURL(fileInput.files[0]);
+
+            // แปลงวันที่ให้สวยงาม
+            const dateObj = new Date(date || new Date());
+            const dateStr = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            // สร้าง HTML ของการ์ดใหม่
+            const newCardHTML = `
+                <div class="gallery-card">
+                    <span class="badge-new">NEW</span>
+                    <div class="img-wrapper">
+                        <img src="${imgUrl}" alt="${title}">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-date">${dateStr}</span>
+                        <h3 class="card-title">${title}</h3>
+                    </div>
+                </div>
+            `;
+
+            // แทรกการ์ดใหม่เข้าไปเป็นตัวแรกของ Grid
+            const grid = document.getElementById('galleryGrid');
+            grid.insertAdjacentHTML('afterbegin', newCardHTML);
+
+            // Reset ฟอร์ม
+            document.getElementById('imgTitle').value = "";
+            document.getElementById('imgFile').value = "";
+            alert("โพสต์กิจกรรมเรียบร้อยแล้ว!");
+        }
+    </script>
+
+</body>
+
+</html>

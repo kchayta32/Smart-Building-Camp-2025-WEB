@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Building Camp 2025</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --harvard-crimson: #A51C30;
+            /* สีแดงโทน Harvard */
+            --harvard-black: #1e1e1e;
+            --gold-accent: #c49a6c;
+            /* สีทองสำหรับเน้นคำ */
+            --text-white: #ffffff;
+            --bg-light: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--harvard-black);
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        .brand-font {
+            font-family: 'Merriweather', serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--harvard-crimson);
+            color: var(--text-white);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .faculty-name {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .project-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Merriweather', serif;
+        }
+
+        .nav-menu ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-menu a {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-white);
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--gold-accent);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        /* --- HERO SECTION (ตามภาพต้นแบบ) --- */
+        .hero {
+            height: 100vh;
+            /* ใช้รูปตึกมุมเงยคล้ายต้นฉบับ */
+            background-image: linear-gradient(rgba(30, 30, 30, 0.6), rgba(30, 30, 30, 0.8)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 0 10%;
+            margin-top: 0;
+            /* Reset margin because of fixed header */
+            padding-top: 80px;
+            /* Compensate for fixed header */
+        }
+
+        .hero-content {
+            max-width: 800px;
+            color: var(--text-white);
+        }
+
+        .date-badge {
+            display: inline-block;
+            border: 1px solid var(--gold-accent);
+            color: var(--gold-accent);
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 .highlight {
+            color: var(--gold-accent);
+            font-style: italic;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin-bottom: 40px;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--harvard-crimson);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #7a1322;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--harvard-black);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* --- SECTIONS (จำลองส่วน Document/Gallery) --- */
+        .section-container {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            color: var(--harvard-crimson);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Grid for Documents */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .doc-card {
+            background: white;
+            border: 1px solid #eee;
+            padding: 30px;
+            border-radius: 4px;
+            border-top: 4px solid var(--harvard-crimson);
+            transition: transform 0.3s;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .doc-card h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        .doc-card span {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--harvard-crimson);
+            font-weight: 600;
+            border-bottom: 1px solid transparent;
+        }
+
+        .download-link:hover {
+            border-bottom: 1px solid var(--harvard-crimson);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--harvard-black);
+            color: white;
+            padding: 50px 20px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .nav-menu ul {
+                gap: 15px;
+                font-size: 0.9rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo-area">
+            <span class="faculty-name">FACULTY OF ENGINEERING AND INDUSTRIAL TECHNOLOGY</span>
+            <span class="project-name">Smart Building Camp 2025</span>
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#">หน้าหลัก</a></li>
+                <li><a href="schedule.html">กำหนดการ</a></li>
+                <li><a href="#documents">คลังเอกสาร</a></li>
+                <li><a href="gallery.html">ภาพกิจกรรม</a></li>
+                <li><a href="#">ผู้ช่วยอัจฉริยะ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="date-badge">24 - 29 พฤศจิกายน 2568</div>
+            <h1>
+                Building the Future <br>
+                <span class="highlight">Smartly.</span>
+            </h1>
+            <p>
+                ยินดีต้อนรับสู่โครงการ Smart Building Model Camp 2025 พื้นที่แห่งการเรียนรู้
+                นวัตกรรม และการออกแบบอาคารอัจฉริยะเพื่อความยั่งยืน
+            </p>
+            <div class="cta-group">
+                <a href="#documents" class="btn btn-primary">เข้าถึงคลังเอกสาร &rarr;</a>
+                <a href="gallery.html" class="btn btn-secondary">ชมภาพกิจกรรม</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="documents" class="section-container">
+        <div class="section-header">
+            <h2>คลังเอกสารโครงการ</h2>
+            <p>ดาวน์โหลดเอกสารประกอบการเรียนรู้และคู่มือต่างๆ</p>
+        </div>
+        <div class="doc-grid">
+            <div class="doc-card">
+                <h3>คู่มือโครงการฉบับสมบูรณ์</h3>
+                <span>PDF • 2.5 MB • อัปเดตล่าสุด 19 พ.ย. 68</span>
+                <br>
+                <a href="#" class="download-link">ดาวน์โหลดไฟล์</a>
+            </div>
+            <div class="doc-card">
+                <h3>ตารางกิจกรรม 6 วัน</h3>
+                <span>PDF • 1.2 MB • อัปเดตล่าสุด 18 พ.ย. 68</span>
+                <br>
+                <a href="#" class="download-link">ดาวน์โหลดไฟล์</a>
+            </div>
+            <div class="doc-card">
+                <h3>Slide: Smart Building 101</h3>
+                <span>PPTX • 15 MB • โดย ดร.วิศวะ</span>
+                <br>
+                <a href="#" class="download-link">ดาวน์โหลดไฟล์</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="section-container"
+        style="background-color: #f4f4f4; padding: 40px; border-radius: 8px;">
+        <div class="section-header">
+            <h2>ภาพกิจกรรม</h2>
+            <p>รวมภาพความประทับใจจากค่าย (Album Grid)</p>
+        </div>
+        <div style="text-align: center; color: #888; padding: 50px; border: 2px dashed #ccc;">
+            [พื้นที่สำหรับแสดง Grid รูปภาพกิจกรรม]
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Smart Building Model Camp. Faculty of Engineering and Industrial Technology.</p>
+    </footer>
+
+</body>
+
+</html>
