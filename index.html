@@ -11,18 +11,16 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
         /* --- CSS VARIABLES & RESET --- */
         :root {
             --harvard-crimson: #004aad;
-            /* สีแดงโทน Harvard */
             --harvard-black: #101820;
             --gold-accent: #f97825;
-            /* สีทองสำหรับเน้นคำ */
             --text-white: #ffffff;
             --bg-light: #f4f6f8;
-            /* ปรับพื้นหลังให้ออกเทาฟ้าจางๆ นิดหน่อยเพื่อให้เข้าธีม */
             --bg-section: #ffffff;
         }
 
@@ -37,6 +35,8 @@
             background-color: var(--bg-light);
             color: var(--harvard-black);
             line-height: 1.6;
+            overflow-x: hidden;
+            /* ป้องกันสกรอลแนวนอนของทั้งหน้า */
         }
 
         h1,
@@ -56,20 +56,24 @@
         header {
             background-color: var(--harvard-crimson);
             color: var(--text-white);
-            padding: 15px 40px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: fixed;
             width: 100%;
             top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 2002;
+            /* Layer พื้นฐาน */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
         }
 
         .logo-area {
             display: flex;
             flex-direction: column;
+            max-width: 70%;
+            z-index: 1001;
         }
 
         .faculty-name {
@@ -77,39 +81,37 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             opacity: 0.9;
-            font-family: 'Sarabun', sans-serif;
-
-            margin-bottom: 15px;
-            /* ปรับตัวเลขได้ตามชอบ ยิ่งมากยิ่งห่าง (เช่น 10px, 20px) */
+            margin-bottom: 8px;
             display: block;
-            /* เพิ่มเพื่อความชัวร์ว่ามันจะกินพื้นที่เต็มบรรทัด */
+            font-family: 'Sarabun', sans-serif;
         }
 
         .project-name {
-            font-size: 1.2rem;
-            /* ลดขนาดลงนิดหน่อยเพื่อให้พอดี header */
+            font-size: 1rem;
             font-weight: 700;
+            line-height: 1.2;
             font-family: 'Merriweather', serif;
-            display: block;
-            /* เพื่อให้มันเป็นกล่องข้อความที่ชัดเจน */
-            line-height: 1.3;
-            /* สำคัญ: ปรับระยะห่างระหว่างบรรทัดให้ดูไม่ห่างเกินไป */
-            margin-top: 5px;
-            /* เว้นระยะห่างจากชื่อคณะนิดหน่อย */
         }
 
         .nav-menu ul {
             display: flex;
             list-style: none;
-            gap: 30px;
+            gap: 20px;
         }
 
         .nav-menu a {
-            font-size: 0.95rem;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: 0.3s;
             font-weight: 500;
-            color: var(--text-white);
-            position: relative;
-            padding-bottom: 5px;
+        }
+
+        .nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gold-accent);
         }
 
         .nav-menu a::after {
@@ -127,20 +129,68 @@
             width: 100%;
         }
 
-        /* --- HERO SECTION (ตามภาพต้นแบบ) --- */
+        /* Overlay ฉากหลังมืด */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1500;
+            /* อยู่ใต้เมนูแต่อยู่บนเนื้อหา */
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2001;
+            /* อยู่สูงกว่าเมนู */
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-white);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        /* Animation เปลี่ยนเป็นกากบาท */
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* --- HERO SECTION --- */
         .hero {
             height: 100vh;
-            /* ใช้รูปตึกมุมเงยคล้ายต้นฉบับ */
-            background-image: linear-gradient(rgba(30, 30, 30, 0.6), rgba(30, 30, 30, 0.8)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
+            background-image: linear-gradient(rgba(0, 53, 107, 0.7), rgba(0, 33, 71, 0.8)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: center;
             padding: 0 10%;
             margin-top: 0;
-            /* Reset margin because of fixed header */
-            padding-top: 80px;
-            /* Compensate for fixed header */
+            padding-top: 100px;
         }
 
         .hero-content {
@@ -193,6 +243,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            border-radius: 4px;
         }
 
         .btn-primary {
@@ -201,7 +252,7 @@
         }
 
         .btn-primary:hover {
-            background-color: #f97825;
+            background-color: #003380;
         }
 
         .btn-secondary {
@@ -213,7 +264,7 @@
             background-color: #e0e0e0;
         }
 
-        /* --- SECTIONS (จำลองส่วน Document/Gallery) --- */
+        /* --- SECTIONS COMMON --- */
         .section-container {
             max-width: 1200px;
             margin: 80px auto;
@@ -231,7 +282,7 @@
             margin-bottom: 10px;
         }
 
-        /* Grid for Documents */
+        /* --- DOCUMENTS GRID (Home Version) --- */
         .doc-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -245,6 +296,11 @@
             border-radius: 4px;
             border-top: 4px solid var(--harvard-crimson);
             transition: transform 0.3s;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .doc-card:hover {
@@ -274,6 +330,150 @@
             border-bottom: 1px solid var(--harvard-crimson);
         }
 
+        .type-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #eee;
+            color: #555;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* --- GALLERY SLIDER (Highlight) --- */
+        .gallery-section-wrapper {
+            background-color: #f4f4f4;
+            padding: 60px 0;
+            border-radius: 0;
+        }
+
+        .slider-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ตัวกล่อง Slider */
+        .gallery-slider {
+            display: flex;
+            overflow-x: auto;
+            /* เลื่อนแนวนอน */
+            scroll-snap-type: x mandatory;
+            /* บังคับให้ Snap ทีละรูป */
+            gap: 20px;
+            padding-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+            /* ลื่นไหลบน iOS */
+            scrollbar-width: none;
+            /* Firefox ซ่อน Scrollbar */
+        }
+
+        .gallery-slider::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari ซ่อน Scrollbar */
+        }
+
+        /* การ์ดใน Slider */
+        .gallery-slide-item {
+            flex: 0 0 320px;
+            /* Fix ความกว้างการ์ด */
+            scroll-snap-align: start;
+            /* จุด Snap */
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .gallery-slide-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .slide-img {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .slide-content {
+            padding: 15px;
+        }
+
+        .slide-date {
+            font-size: 0.8rem;
+            color: var(--gold-accent);
+            font-weight: bold;
+        }
+
+        .slide-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: 5px;
+            line-height: 1.3;
+        }
+
+        /* ปุ่มควบคุมซ้ายขวา */
+        .slider-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 10;
+            color: var(--harvard-crimson);
+            font-size: 1.2rem;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .slider-nav-btn:hover {
+            background: var(--harvard-crimson);
+            color: white;
+        }
+
+        .prev-btn {
+            left: -10px;
+        }
+
+        .next-btn {
+            right: -10px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 10px 15px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .slider-nav-btn {
+                display: none;
+                /* ซ่อนปุ่มบนมือถือ ให้ใช้นิ้วปัดเอา */
+            }
+
+            .gallery-slide-item {
+                flex: 0 0 280px;
+            }
+
+            /* ลดขนาดการ์ดบนมือถือ */
+            .hero {
+                padding-top: 140px;
+                /* เพิ่มเป็น 140px ให้พ้นเมนูบนมือถือ */
+            }
+        }
+
         /* Footer */
         footer {
             background-color: var(--harvard-black);
@@ -283,78 +483,81 @@
             font-size: 0.9rem;
         }
 
-        /* Responsive */
-        /* --- Responsive Rules (Mobile) --- */
+        /* Responsive Header */
         @media (max-width: 768px) {
             header {
-                /* ให้ Header ยืดหยุ่นและอนุญาตให้เมนูตกลงมาบรรทัดล่างได้เมื่อกดเปิด */
                 flex-wrap: wrap;
-                justify-content: space-between;
-                /* ดันของไปชิดซ้าย-ขวา */
-                align-items: center;
-                /* จัดให้อยู่กึ่งกลางแนวตั้ง */
                 padding: 15px 20px;
             }
 
             .logo-area {
-                /* บังคับชิดซ้าย */
                 text-align: left;
-
-                /* จำกัดความกว้างไว้แค่ 80% เพื่อเหลือที่ให้ปุ่ม Hamburger ไม่โดนเบียด */
                 max-width: 80%;
-
-                /* ลบ margin-bottom ที่อาจจะดันปุ่มลงไป */
                 margin-bottom: 0;
             }
 
             .faculty-name {
                 display: block;
                 margin-bottom: 5px;
-                /* เว้นห่างจากชื่อโครงการนิดเดียวพอ */
             }
 
             .project-name {
                 font-size: 1rem;
-                /* ลดขนาดฟอนต์ชื่อโครงการในมือถือนิดหน่อยกันล้น */
                 line-height: 1.3;
             }
 
             .hamburger {
                 display: flex;
-                /* แสดงปุ่ม Hamburger */
                 margin-left: auto;
-                /* ดันตัวเองไปขวาสุดเสมอ (เผื่อ Logo สั้น) */
             }
 
             .nav-menu {
-                display: none;
-                /* ซ่อนเมนูไว้ก่อน */
-                width: 100%;
-                /* เมื่อเปิดแล้วให้กินพื้นที่เต็มความกว้าง (ตกมาบรรทัดใหม่) */
-                margin-top: 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                position: fixed;
+                top: 0;
+                right: -280px;
+                /* ซ่อนไว้ทางขวา */
+                width: 280px;
+                height: 100vh;
+                background: var(--harvard-crimson);
+                padding-top: 60px;
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 2000;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
             }
 
             .nav-menu.active {
-                display: block;
-                animation: slideDown 0.3s ease-out;
+                right: 0;
             }
+
+            /* เลื่อนออกมา */
 
             .nav-menu ul {
                 flex-direction: column;
                 gap: 0;
-                width: 100%;
             }
 
             .nav-menu a {
                 display: block;
-                padding: 15px 0;
+                padding: 15px 25px;
+                color: white;
+                font-size: 1.1rem;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                font-size: 1rem;
-                text-align: center;
-                /* ให้ลิงก์ในเมนูอยู่ตรงกลางสวยๆ */
+                text-align: left;
+                /* จัดชิดซ้าย */
             }
 
+            .nav-menu a:active {
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .container,
+            .hero,
+            .board-container {
+                margin-top: 100px;
+                padding-top: 20px;
+            }
+
+            /* หมายเหตุ: ถ้าหน้าไหนมี .hero ให้ลบ margin-top ออก แล้วใช้ padding-top: 120px แทน */
             @keyframes slideDown {
                 from {
                     opacity: 0;
@@ -367,121 +570,31 @@
                 }
             }
 
-            /* ปรับ Hero Section ให้ลงมาต่ำหน่อย เพราะ Header บนมือถืออาจจะสูงขึ้น */
-            .hero {
-                padding-top: 110px;
-            }
 
-            .hero h1 {
-                font-size: 2.8rem;
-            }
         }
 
-        /* --- Hamburger Menu Style --- */
-        .hamburger {
-            display: none;
-            /* ซ่อนบน PC */
-            cursor: pointer;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background-color: var(--text-white);
-            border-radius: 2px;
-            transition: 0.3s;
-        }
-
-        /* --- Responsive Rules --- */
-        @media (max-width: 768px) {
-            header {
-                flex-wrap: wrap;
-                /* อนุญาตให้เนื้อหาตกบรรทัดได้ */
-                padding: 15px 20px;
-            }
-
-            .logo-area {
-                max-width: 80%;
-                /* ให้พื้นที่โลโก้ไม่เบียดปุ่มเกินไป */
-            }
-
-            .hamburger {
-                display: flex;
-                /* โชว์ปุ่มบนมือถือ */
-            }
-
-            .nav-menu {
-                display: none;
-                /* ซ่อนเมนูไว้ก่อน */
-                width: 100%;
-                margin-top: 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            .nav-menu.active {
-                display: block;
-                /* แสดงเมนูเมื่อมี class 'active' */
-                animation: slideDown 0.3s ease-out;
-            }
-
-            .nav-menu ul {
-                flex-direction: column;
-                /* เรียงเมนูเป็นแนวตั้ง */
-                gap: 0;
-                width: 100%;
-            }
-
-            .nav-menu a {
-                display: block;
-                padding: 15px 0;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                font-size: 1rem;
-            }
-
-            /* Animation เล็กน้อยตอนเปิดเมนู */
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            /* ปรับ Hero Section ให้ไม่โดน Header บังบนมือถือ */
-            .hero {
-                padding-top: 100px;
-            }
-
-            .hero h1 {
-                font-size: 2.8rem;
-            }
+        #loadingDocs,
+        #loadingGallery {
+            text-align: center;
+            color: #888;
+            width: 100%;
+            padding: 20px;
         }
     </style>
 </head>
 
 <body>
-
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
     <header>
         <div class="logo-area">
             <span class="faculty-name">FACULTY OF ENGINEERING AND INDUSTRIAL TECHNOLOGY</span>
-            <span class="project-name">
-                Bilateral Academic Workshop<br>
-                on Smart Building Model Camp 2025
-            </span>
+            <span class="project-name">Bilateral Academic Workshop<br>on Smart Building Model Camp 2025</span>
         </div>
-
-        <div class="hamburger" onclick="toggleMenu()">
+        <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
             <span></span>
             <span></span>
             <span></span>
         </div>
-
         <nav class="nav-menu" id="mobileMenu">
             <ul>
                 <li><a href="index.html">หน้าหลัก</a></li>
@@ -489,7 +602,6 @@
                 <li><a href="teamboard.html">กระดานจัดทีม</a></li>
                 <li><a href="documents.html">คลังเอกสาร</a></li>
                 <li><a href="gallery.html">ภาพกิจกรรม</a></li>
-                <li><a href="#">ผู้ช่วยอัจฉริยะ</a></li>
             </ul>
         </nav>
     </header>
@@ -497,69 +609,189 @@
     <section class="hero">
         <div class="hero-content">
             <div class="date-badge">24 - 29 พฤศจิกายน 2568</div>
-            <h1>
-                Building the Future <br>
-                <span class="highlight">Smartly.</span>
-            </h1>
-            <p>
-                ยินดีต้อนรับสู่โครงการ Smart Building Model Camp 2025 พื้นที่แห่งการเรียนรู้
-                นวัตกรรม และการออกแบบอาคารอัจฉริยะเพื่อความยั่งยืน
-            </p>
+            <h1>Building the Future <br><span class="highlight">Smartly.</span></h1>
+            <p>ยินดีต้อนรับสู่โครงการ Smart Building Model Camp 2025 พื้นที่แห่งการเรียนรู้ นวัตกรรม
+                และการออกแบบอาคารอัจฉริยะเพื่อความยั่งยืน</p>
             <div class="cta-group">
-                <a href="documents.html" class="btn btn-primary">เข้าถึงคลังเอกสาร &rarr;</a>
+                <a href="teamboard.html" class="btn btn-primary">จัดทีมเลยยย! &rarr;</a>
                 <a href="gallery.html" class="btn btn-secondary">ชมภาพกิจกรรม</a>
             </div>
         </div>
     </section>
 
-    <section id="documents" class="section-container">
+    <section class="section-container">
         <div class="section-header">
-            <h2>คลังเอกสารโครงการ</h2>
-            <p>ดาวน์โหลดเอกสารประกอบการเรียนรู้และคู่มือต่างๆ</p>
+            <h2>เอกสารล่าสุด</h2>
+            <p>ดาวน์โหลดเอกสารและคู่มือสำคัญล่าสุด</p>
         </div>
-        <div class="doc-grid">
-            <div class="doc-card">
-                <h3>คู่มือโครงการฉบับสมบูรณ์</h3>
-                <span>PDF • 2.5 MB • อัปเดตล่าสุด 19 พ.ย. 68</span>
-                <br>
-                <a href="#" class="download-link">ดาวน์โหลดไฟล์</a>
-            </div>
-            <div class="doc-card">
-                <h3>ตารางกิจกรรม 6 วัน</h3>
-                <span>PDF • 1.2 MB • อัปเดตล่าสุด 18 พ.ย. 68</span>
-                <br>
-                <a href="#" class="download-link">ดาวน์โหลดไฟล์</a>
-            </div>
-            <div class="doc-card">
-                <h3>Slide: Smart Building 101</h3>
-                <span>PPTX • 15 MB • โดย ดร.วิศวะ</span>
-                <br>
-                <a href="#" class="download-link">ดาวน์โหลดไฟล์</a>
-            </div>
+        <div class="doc-grid" id="homeDocGrid">
+            <div id="loadingDocs"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดข้อมูล...</div>
+        </div>
+        <div style="text-align:center; margin-top:40px;">
+            <a href="documents.html" class="download-link">ดูเอกสารทั้งหมด &rarr;</a>
         </div>
     </section>
 
-    <section id="gallery" class="section-container"
-        style="background-color: #f4f4f4; padding: 40px; border-radius: 8px;">
-        <div class="section-header">
-            <h2>ภาพกิจกรรม</h2>
-            <p>รวมภาพความประทับใจจากค่าย (Album Grid)</p>
+    <div class="gallery-section-wrapper">
+        <div class="section-container" style="margin:0 auto;">
+            <div class="section-header">
+                <h2>ภาพกิจกรรมล่าสุด</h2>
+                <p>ปัดซ้าย-ขวา เพื่อชมบรรยากาศกิจกรรม</p>
+            </div>
+
+            <div class="slider-container">
+                <button class="slider-nav-btn prev-btn" onclick="slideScroll(-1)"><i
+                        class="fas fa-chevron-left"></i></button>
+
+                <div class="gallery-slider" id="homeGallerySlider">
+                    <div id="loadingGallery"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดรูปภาพ...</div>
+                </div>
+
+                <button class="slider-nav-btn next-btn" onclick="slideScroll(1)"><i
+                        class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <div style="text-align:center; margin-top:40px;">
+                <a href="gallery.html" class="btn btn-primary" style="display:inline-flex;">เข้าชมอัลบั้มทั้งหมด
+                    &rarr;</a>
+            </div>
         </div>
-        <div style="text-align: center; color: #888; padding: 50px; border: 2px dashed #ccc;">
-            [พื้นที่สำหรับแสดง Grid รูปภาพกิจกรรม]
-        </div>
-    </section>
+    </div>
 
     <footer>
         <p>&copy; 2025 Smart Building Model Camp. Faculty of Engineering and Industrial Technology.</p>
     </footer>
-    <script>
-        function toggleMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('active');
-        }
-    </script>
+
     <script src="translator.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- วาง Config เดิมของคุณตรงนี้ ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXGTHx3VwindrxYpoly2ttp5HcumDFEwk",
+            authDomain: "sbmc2025-b3429.firebaseapp.com",
+            projectId: "sbmc2025-b3429",
+            storageBucket: "sbmc2025-b3429.firebasestorage.app",
+            messagingSenderId: "927653039464",
+            appId: "1:927653039464:web:6250faf2001311775d9add"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function: Load Latest 3 Documents
+        async function loadHomeDocs() {
+            const docContainer = document.getElementById('homeDocGrid');
+            try {
+                const q = query(collection(db, "documents"), orderBy("timestamp", "desc"), limit(3));
+                const snapshot = await getDocs(q);
+
+                docContainer.innerHTML = ''; // Clear loading
+
+                if (snapshot.empty) {
+                    docContainer.innerHTML = '<p style="text-align:center; width:100%;">ยังไม่มีเอกสาร</p>';
+                    return;
+                }
+
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    let typeLabel = "DOC";
+                    if (data.type === 'pdf') typeLabel = "PDF";
+                    else if (data.type === 'slide') typeLabel = "PPT";
+
+                    const html = `
+                        <div class="doc-card">
+                            <div>
+                                <span class="type-badge">${typeLabel}</span>
+                                <h3>${data.title}</h3>
+                                <span>วันที่: ${data.date}</span>
+                            </div>
+                            <a href="${data.link || '#'}" class="download-link" target="_blank">ดาวน์โหลดไฟล์</a>
+                        </div>
+                    `;
+                    docContainer.insertAdjacentHTML('beforeend', html);
+                });
+
+            } catch (e) {
+                console.error(e);
+                docContainer.innerHTML = '<p style="color:red; text-align:center;">โหลดข้อมูลไม่สำเร็จ</p>';
+            }
+        }
+
+        // Function: Load Latest 6 Gallery Items
+        async function loadHomeGallery() {
+            const galleryContainer = document.getElementById('homeGallerySlider');
+            try {
+                const q = query(collection(db, "gallery"), orderBy("timestamp", "desc"), limit(6));
+                const snapshot = await getDocs(q);
+
+                galleryContainer.innerHTML = '';
+
+                if (snapshot.empty) {
+                    galleryContainer.innerHTML = '<p style="text-align:center; width:100%;">ยังไม่มีรูปภาพ</p>';
+                    return;
+                }
+
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    // Use first image as cover
+                    const coverImg = (data.images && data.images.length > 0) ? data.images[0] : '';
+
+                    const html = `
+                        <div class="gallery-slide-item" onclick="location.href='gallery.html'">
+                            <img src="${coverImg}" class="slide-img" alt="${data.title}">
+                            <div class="slide-content">
+                                <div class="slide-date">${data.date}</div>
+                                <div class="slide-title">${data.title}</div>
+                            </div>
+                        </div>
+                    `;
+                    galleryContainer.insertAdjacentHTML('beforeend', html);
+                });
+
+            } catch (e) {
+                console.error(e);
+                galleryContainer.innerHTML = '<p style="color:red; text-align:center;">โหลดรูปไม่สำเร็จ</p>';
+            }
+        }
+
+        // Init Loading
+        loadHomeDocs();
+        loadHomeGallery();
+
+    </script>
+
+    <script>
+        // Mobile Menu Logic (แบบสไลด์ + ปัดนิ้ว)
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('menuOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        let startX = 0;
+
+        function toggleMenu() {
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('open');
+        }
+
+        function closeMenu() {
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburger.classList.remove('open');
+        }
+
+        // เพิ่มฟังก์ชันใช้นิ้วปัด (Swipe) เพื่อปิดเมนู
+        document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            // ถ้าปัดขวาไปซ้าย (มากกว่า 50px) ขณะเมนูเปิดอยู่ -> ปิดเมนู
+            if (startX - endX > 50 && menu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+    </script>
 </body>
 
 </html>

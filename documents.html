@@ -27,6 +27,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -34,6 +35,7 @@
             background-color: var(--bg-light);
             color: var(--harvard-black);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         h1,
@@ -42,24 +44,76 @@
             font-family: 'Merriweather', serif;
         }
 
+        /* --- HEADER & NAVIGATION (Mobile Slide) --- */
         header {
             background-color: var(--harvard-crimson);
             color: var(--text-white);
-            padding: 15px 40px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
+            position: fixed;
+            width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+            z-index: 1001;
+        }
+
+        .faculty-name {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            display: block;
         }
 
         .project-name {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 700;
+            line-height: 1.2;
+            font-family: 'Merriweather', serif;
         }
 
+        /* Hamburger Button */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2001;
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-white);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* Menu List */
         .nav-menu ul {
             display: flex;
             list-style: none;
@@ -70,16 +124,41 @@
             color: white;
             text-decoration: none;
             font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 4px;
             transition: 0.3s;
+            font-weight: 500;
         }
 
         .nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: var(--gold-accent);
         }
 
+        /* Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- MAIN CONTENT --- */
         .container {
             max-width: 1100px;
-            margin: 40px auto;
+            margin: 120px auto 50px auto;
+            /* เว้น Header */
             padding: 0 20px;
         }
 
@@ -108,6 +187,7 @@
             justify-content: space-between;
             min-height: 200px;
             animation: fadeIn 0.5s;
+            position: relative;
         }
 
         .doc-card:hover {
@@ -161,13 +241,14 @@
             font-weight: 600;
             text-decoration: none;
             border-bottom: 2px solid transparent;
+            cursor: pointer;
         }
 
         .download-btn:hover {
             border-bottom: 2px solid var(--harvard-crimson);
         }
 
-        /* --- Admin Icon --- */
+        /* Admin Trigger */
         .admin-trigger {
             position: fixed;
             top: 90px;
@@ -193,7 +274,7 @@
             border-color: var(--harvard-crimson);
         }
 
-        /* --- Modal --- */
+        /* Modal (Z-Index สูงกว่า Menu) */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -201,10 +282,11 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
+            z-index: 2500;
+            /* สูงกว่า Menu (2000) */
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 2000;
             backdrop-filter: blur(3px);
         }
 
@@ -226,6 +308,7 @@
         .auth-section.active,
         .upload-section.active {
             display: block;
+            animation: fadeIn 0.3s;
         }
 
         .form-group {
@@ -270,6 +353,34 @@
             color: #888;
         }
 
+        .btn-delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            display: none;
+        }
+
+        .btn-delete.show {
+            display: block;
+        }
+
+        .btn-delete:hover {
+            color: red;
+        }
+
+        #loadingText {
+            text-align: center;
+            width: 100%;
+            grid-column: 1/-1;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -292,23 +403,84 @@
             }
         }
 
+        /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
             header {
+                padding: 10px 15px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            /* Slide-out Menu */
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -280px;
+                width: 280px;
+                height: 100vh;
+                background: var(--harvard-crimson);
+                padding-top: 60px;
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 2000;
+                /* บนสุด */
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-menu ul {
                 flex-direction: column;
-                gap: 10px;
+                gap: 0;
+            }
+
+            .nav-menu a {
+                display: block;
+                padding: 15px 25px;
+                color: white;
+                font-size: 1.1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: left;
+            }
+
+            .nav-menu a:active {
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            /* Content Adjustments */
+            .container {
+                margin-top: 140px;
+            }
+
+            .doc-grid {
+                gap: 15px;
             }
         }
     </style>
 </head>
 
 <body>
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
     <header>
-        <div class="project-name">Smart Building Camp 2025</div>
-        <nav class="nav-menu">
+        <div class="logo-area">
+            <span class="faculty-name">FACULTY OF ENGINEERING AND INDUSTRIAL TECHNOLOGY</span>
+            <span class="project-name">Bilateral Academic Workshop<br>on Smart Building Model Camp 2025</span>
+        </div>
+
+        <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+
+        <nav class="nav-menu" id="mobileMenu">
             <ul>
                 <li><a href="index.html">หน้าหลัก</a></li>
-                <li><a href="documents.html" style="color: var(--gold-accent);">คลังเอกสาร</a></li>
+                <li><a href="schedule.html">กำหนดการ</a></li>
+                <li><a href="teamboard.html">กระดานจัดทีม</a></li>
+                <li><a href="documents.html" style="background:rgba(255,255,255,0.1);">คลังเอกสาร</a></li>
                 <li><a href="gallery.html">ภาพกิจกรรม</a></li>
             </ul>
         </nav>
@@ -321,6 +493,7 @@
     <div class="container">
         <h1 class="page-title">คลังเอกสารและสื่อสิ่งพิมพ์</h1>
         <div class="doc-grid" id="docGrid">
+            <div id="loadingText"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดเอกสาร...</div>
         </div>
     </div>
 
@@ -330,7 +503,7 @@
 
             <div id="authSection" class="auth-section active">
                 <h3 style="margin-bottom: 20px; text-align: center; color: var(--harvard-crimson);">Admin Login</h3>
-                <input type="password" id="pinInput" placeholder="กรอก PIN (1212312121)">
+                <input type="password" id="pinInput" placeholder="กรอก PIN เพื่อเข้าสู่ระบบ...">
                 <button onclick="checkPin()" class="btn-full">เข้าสู่ระบบ</button>
                 <p id="loginMsg" style="color: red; font-size: 0.85rem; margin-top: 10px; text-align: center;"></p>
             </div>
@@ -350,85 +523,160 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>เลือกไฟล์</label>
-                    <input type="file" id="docFile">
+                    <label>ลิงก์ดาวน์โหลด (URL)</label>
+                    <input type="text" id="docLink" value="#" placeholder="ใส่ URL ไฟล์ (เช่น Google Drive)">
                 </div>
-                <button onclick="saveDoc()" class="btn-full">บันทึกเอกสาร</button>
+                <button onclick="window.saveDoc()" class="btn-full">บันทึกเอกสาร</button>
             </div>
         </div>
     </div>
+
     <script src="translator.js"></script>
-    <script>
-        const DB_KEY = 'docs_db_v1';
-        let docData = [];
 
-        window.onload = function () {
-            const saved = localStorage.getItem(DB_KEY);
-            if (saved) {
-                docData = JSON.parse(saved);
-            } else {
-                docData = [
-                    { id: 1, title: "กำหนดการเดินทาง", type: "pdf", date: "18 พ.ย. 68" },
-                    { id: 2, title: "Slide Smart Building", type: "slide", date: "19 พ.ย. 68" }
-                ];
-            }
-            renderDocs();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- ⚠️⚠️ วาง Config เดิมของคุณตรงนี้ ⚠️⚠️ ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBXGTHx3VwindrxYpoly2ttp5HcumDFEwk",
+            authDomain: "sbmc2025-b3429.firebaseapp.com",
+            projectId: "sbmc2025-b3429",
+            storageBucket: "sbmc2025-b3429.firebasestorage.app",
+            messagingSenderId: "927653039464",
+            appId: "1:927653039464:web:6250faf2001311775d9add"
         };
+        
 
-        function renderDocs() {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const COLLECTION_NAME = "documents";
+
+        let isAdmin = false;
+
+        // Real-time Listener
+        const q = query(collection(db, COLLECTION_NAME), orderBy("timestamp", "desc"));
+        const loadingText = document.getElementById('loadingText');
+
+        loadingText.style.display = 'block';
+
+        onSnapshot(q, (snapshot) => {
             const grid = document.getElementById('docGrid');
             grid.innerHTML = '';
+            loadingText.style.display = 'none';
 
-            docData.forEach(doc => {
-                let badgeClass = "type-pdf"; let badgeText = "PDF";
-                if (doc.type === 'word') { badgeClass = "type-word"; badgeText = "Word"; }
-                else if (doc.type === 'slide') { badgeClass = "type-slide"; badgeText = "PPT"; }
-
-                const html = `
-                    <div class="doc-card">
-                        <div>
-                            <span class="file-type-badge ${badgeClass}">${badgeText}</span>
-                            <h3 class="doc-title">${doc.title}</h3>
-                            <p class="doc-meta">วันที่: ${doc.date} • โดย Admin</p>
-                        </div>
-                        <a href="#" class="download-btn" onclick="alert('หมายเหตุ: ไฟล์นี้เป็นข้อมูลจำลอง (Demo) จึงไม่มีไฟล์จริงให้ดาวน์โหลด')">ดาวน์โหลด &darr;</a>
-                    </div>
-                `;
-                grid.insertAdjacentHTML('beforeend', html);
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                createDocCard(docSnap.id, data);
             });
+
+            if (snapshot.empty) {
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#888;">ยังไม่มีเอกสาร</p>';
+            }
+        });
+
+        function createDocCard(id, doc) {
+            let badgeClass = "type-pdf"; let badgeText = "PDF";
+            if (doc.type === 'word') { badgeClass = "type-word"; badgeText = "Word"; }
+            else if (doc.type === 'slide') { badgeClass = "type-slide"; badgeText = "PPT"; }
+
+            const deleteClass = isAdmin ? 'btn-delete show' : 'btn-delete';
+            const deleteBtn = `<i class="fas fa-trash ${deleteClass}" onclick="window.deleteDocument('${id}')" title="ลบเอกสาร"></i>`;
+
+            const html = `
+                <div class="doc-card">
+                    ${deleteBtn}
+                    <div>
+                        <span class="file-type-badge ${badgeClass}">${badgeText}</span>
+                        <h3 class="doc-title">${doc.title}</h3>
+                        <p class="doc-meta">วันที่: ${doc.date}</p>
+                    </div>
+                    <a href="${doc.link || '#'}" class="download-btn" target="_blank" onclick="if(this.getAttribute('href') === '#') alert('นี่คือไฟล์จำลอง (Demo)');">ดาวน์โหลด &darr;</a>
+                </div>
+            `;
+            document.getElementById('docGrid').insertAdjacentHTML('beforeend', html);
         }
 
-        function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
-        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; resetForms(); }
-        function resetForms() { document.getElementById('authSection').classList.add('active'); document.getElementById('uploadSection').classList.remove('active'); document.getElementById('pinInput').value = ''; }
+        window.saveDoc = async function () {
+            const title = document.getElementById('docTitle').value;
+            const type = document.getElementById('docType').value;
+            const link = document.getElementById('docLink').value;
 
-        function checkPin() {
+            if (!title) { alert("กรุณาใส่ชื่อเอกสาร"); return; }
+
+            try {
+                await addDoc(collection(db, COLLECTION_NAME), {
+                    title: title,
+                    type: type,
+                    link: link,
+                    date: new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' }),
+                    timestamp: Date.now()
+                });
+                alert("บันทึกสำเร็จ!");
+                document.getElementById('docTitle').value = '';
+                // closeAdminModal(); 
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+
+        window.deleteDocument = async function (id) {
+            if (confirm("ต้องการลบเอกสารนี้ใช่หรือไม่?")) {
+                try {
+                    await deleteDoc(doc(db, COLLECTION_NAME, id));
+                } catch (e) {
+                    alert("Error: " + e.message);
+                }
+            }
+        }
+
+        window.checkPin = function () {
             if (document.getElementById('pinInput').value === "1212312121") {
+                isAdmin = true;
                 document.getElementById('authSection').classList.remove('active');
                 document.getElementById('uploadSection').classList.add('active');
+
+                // Show delete buttons on existing cards
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.classList.add('show');
+                });
+
+                document.getElementById('loginMsg').innerText = "";
             } else {
                 document.getElementById('loginMsg').innerText = "PIN ผิด";
             }
         }
 
-        function saveDoc() {
-            const title = document.getElementById('docTitle').value;
-            const type = document.getElementById('docType').value;
-            if (!title) { alert("กรุณาใส่ชื่อเอกสาร"); return; }
+        window.openAdminModal = () => document.getElementById('adminModal').style.display = 'flex';
+        window.closeAdminModal = () => document.getElementById('adminModal').style.display = 'none';
+    </script>
 
-            const newDoc = {
-                id: Date.now(),
-                title: title,
-                type: type,
-                date: new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' })
-            };
+    <script>
+        // Mobile Menu Logic
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('menuOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        let startX = 0;
 
-            docData.unshift(newDoc);
-            localStorage.setItem(DB_KEY, JSON.stringify(docData));
-            renderDocs();
-            closeAdminModal();
-            alert("เพิ่มรายการเอกสารเรียบร้อย (บันทึกชื่อไฟล์ไว้ถาวร)");
+        function toggleMenu() {
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('open');
         }
+
+        function closeMenu() {
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburger.classList.remove('open');
+        }
+
+        document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50 && menu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
     </script>
 </body>
 

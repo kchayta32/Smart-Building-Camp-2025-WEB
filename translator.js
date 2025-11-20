@@ -1,87 +1,99 @@
 // --- ตั้งค่า API KEY ---
-const API_KEY = "AIzaSyA8CZ1DTS4QK5fp1BTZHOfB5qBPH52DFug"; // <--- ใส่ Gemini API Key ตรงนี้
+const API_KEY = "AIzaSyA8CZ1DTS4QK5fp1BTZHOfB5qBPH52DFug"; // <--- ใส่ Key ของคุณตรงนี้
 
-// เก็บข้อความต้นฉบับไว้กันหาย (Dictionary)
+// ชื่อโมเดล (ถ้า flash ไม่ได้ ให้ลอง gemini-1.0-pro)
+let MODEL_NAME = "gemini-2.5-flash"; 
+
 let originalTexts = new Map();
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. สร้างปุ่มเปลี่ยนภาษาแทรกเข้าไปใน Header
     createLanguageSwitcher();
-
-    // 2. บันทึกข้อความไทยต้นฉบับไว้ก่อน
     saveOriginalTexts();
 });
 
 function createLanguageSwitcher() {
     const nav = document.querySelector('.nav-menu ul') || document.querySelector('nav ul');
-    if (!nav) return;
+    if (!nav || document.getElementById('langSelectorLi')) return;
 
     const li = document.createElement('li');
+    li.id = 'langSelectorLi';
+    // ปรับสไตล์ให้ดูดีขึ้นและไม่เบียดเมนูอื่น
     li.innerHTML = `
-        <select id="langSelector" style="padding: 5px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Sarabun'; cursor: pointer;">
-            <option value="th">🇹🇭 ไทย (Original)</option>
-            <option value="en">🇬🇧 English</option>
-            <option value="lo">🇱🇦 ลาว (Lao)</option>
-        </select>
-        <span id="loadingLang" style="display:none; font-size:0.8rem; color:yellow; margin-left:5px;">
-            <i class="fas fa-spinner fa-spin"></i> แปลภาษา...
-        </span>
+        <div style="display: flex; align-items: center; gap: 5px;">
+            <select id="langSelector" style="padding: 5px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.5); background: rgba(0,0,0,0.2); color: white; font-family: 'Sarabun'; cursor: pointer; outline: none;">
+                <option value="th" style="color:black;">🇹🇭 TH</option>
+                <option value="en" style="color:black;">🇬🇧 EN</option>
+                <option value="lo" style="color:black;">🇱🇦 LA</option>
+            </select>
+            <span id="loadingLang" style="display:none; font-size:0.8rem; color:#ffeb3b;">
+                <i class="fas fa-circle-notch fa-spin"></i>
+            </span>
+        </div>
     `;
     nav.appendChild(li);
 
-    // Event Listener เมื่อเปลี่ยนค่า
-    document.getElementById('langSelector').addEventListener('change', function () {
+    document.getElementById('langSelector').addEventListener('change', function() {
         const lang = this.value;
-        if (lang === 'th') {
-            restoreOriginalTexts();
-        } else {
-            translatePageWithGemini(lang);
-        }
+        if (lang === 'th') restoreOriginalTexts();
+        else translatePageWithGemini(lang);
     });
 }
 
-// ฟังก์ชันเก็บข้อความเดิม
 function saveOriginalTexts() {
-    // เลือกเฉพาะ Element ที่มีตัวหนังสือ
-    const elements = document.querySelectorAll('h1, h2, h3, h4, p, a, span, li, button, label, th, td, .faculty-name, .project-name');
+    // *** จุดที่แก้ไข: เอา li, th, td ออก เพื่อป้องกันการทับลิงก์หรือโครงสร้าง ***
+    // เลือกเฉพาะ element ที่เป็น "เนื้อหา" จริงๆ
+    const selectors = [
+        'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+        'p', 'span', 'strong', 'b', 'i', 'em', 'small',
+        'a',         // <--- เน้นที่ a แทน li
+        'button', 
+        'label',
+        '.faculty-name', 
+        '.project-name',
+        '.card-title',
+        '.timeline-label'
+    ];
 
+    const elements = document.querySelectorAll(selectors.join(','));
+    
     elements.forEach((el, index) => {
-        // เก็บเฉพาะโหนดที่มีข้อความจริงๆ และไม่ใช่ตัวเลขล้วน
-        if (el.innerText.trim() !== "" && !el.hasAttribute('data-no-translate')) {
-            // สร้าง ID อ้างอิง
+        // ป้องกันการเลือก element ที่มีลูกเป็น element อื่น (เลือกเฉพาะใบไม้ปลายสุด)
+        // ยกเว้น a เพราะบางที a มี text เลย
+        if (el.children.length > 0 && el.tagName !== 'A' && el.tagName !== 'BUTTON') return;
+
+        const text = el.innerText.trim();
+        // เก็บเฉพาะที่มีข้อความ, ไม่ใช่ตัวเลขล้วน, ไม่ใช่ช่องเปลี่ยนภาษา
+        if (text !== "" && isNaN(text) && !el.closest('#langSelectorLi') && !el.hasAttribute('data-no-translate')) {
             el.dataset.transId = index;
-            originalTexts.set(index, el.innerText);
+            originalTexts.set(index, text);
         }
     });
 }
 
-// ฟังก์ชันคืนค่าเดิม (ภาษาไทย)
 function restoreOriginalTexts() {
     const elements = document.querySelectorAll('[data-trans-id]');
     elements.forEach(el => {
         const id = parseInt(el.dataset.transId);
-        if (originalTexts.has(id)) {
-            el.innerText = originalTexts.get(id);
-        }
+        if (originalTexts.has(id)) el.innerText = originalTexts.get(id);
     });
 }
 
-// ฟังก์ชันเรียก Gemini
 async function translatePageWithGemini(targetLang) {
     const loading = document.getElementById('loadingLang');
     const selector = document.getElementById('langSelector');
+    
+    if(!API_KEY || API_KEY.includes("YOUR_GEMINI_API_KEY")) {
+        alert("กรุณาใส่ API Key ก่อนครับ"); selector.value = 'th'; return;
+    }
 
     loading.style.display = 'inline-block';
     selector.disabled = true;
 
-    // 1. รวบรวมข้อความที่จะแปล (ส่งไปเป็นก้อนเพื่อประหยัด API call)
     let textBatch = [];
     let idBatch = [];
-
+    
     const elements = document.querySelectorAll('[data-trans-id]');
     elements.forEach(el => {
-        // แปลเฉพาะสิ่งที่ยังไม่ได้แปล หรือแปลทับไปเลยก็ได้
-        // เอาข้อความต้นฉบับ (ไทย) ส่งไปแปลเสมอ เพื่อความแม่นยำ
         const original = originalTexts.get(parseInt(el.dataset.transId));
         if (original) {
             textBatch.push(original);
@@ -89,61 +101,40 @@ async function translatePageWithGemini(targetLang) {
         }
     });
 
-    if (textBatch.length === 0) {
-        loading.style.display = 'none';
-        selector.disabled = false;
-        return;
-    }
+    if (textBatch.length === 0) { loading.style.display = 'none'; selector.disabled = false; return; }
+    
+    // ตัดแบ่งส่งทีละ 50 ข้อความป้องกัน Error
+    if(textBatch.length > 50) { textBatch = textBatch.slice(0, 50); idBatch = idBatch.slice(0, 50); }
 
-    // 2. สร้าง Prompt
     const langName = targetLang === 'en' ? 'English' : 'Lao';
-    const prompt = `
-        You are a professional translator for a Smart Building Engineering Camp website.
-        Translate the following array of Thai texts into ${langName}.
-        Maintain the original tone (Formal/Academic).
-        Do not translate technical terms like "Smart Building", "IoT", "AI" unless necessary.
-        IMPORTANT: Return ONLY a JSON array of strings. No markdown, no explanation.
-        
-        Input Array: ${JSON.stringify(textBatch)}
-    `;
+    const prompt = `Translate to ${langName}. Return JSON array of strings only. Input: ${JSON.stringify(textBatch)}`;
 
     try {
-        // 3. ยิง API
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }]
-            })
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
         });
 
         const data = await response.json();
 
-        // 4. แกะผลลัพธ์
+        if (data.error) throw new Error(data.error.message);
+
         let translatedTextRaw = data.candidates[0].content.parts[0].text;
-
-        // ล้าง Markdown (```json ... ```) ออกถ้ามี
         translatedTextRaw = translatedTextRaw.replace(/```json/g, '').replace(/```/g, '').trim();
-
         const translatedArray = JSON.parse(translatedTextRaw);
 
-        // 5. อัปเดตหน้าเว็บ
-        if (translatedArray.length === idBatch.length) {
-            idBatch.forEach((id, index) => {
+        idBatch.forEach((id, index) => {
+            if (translatedArray[index]) {
                 const el = document.querySelector(`[data-trans-id="${id}"]`);
-                if (el) {
-                    el.innerText = translatedArray[index];
-                }
-            });
-        } else {
-            console.error("จำนวนประโยคที่แปลไม่เท่ากับต้นฉบับ");
-        }
+                if (el) el.innerText = translatedArray[index];
+            }
+        });
 
     } catch (error) {
-        console.error("Translation Error:", error);
-        alert("เกิดข้อผิดพลาดในการแปลภาษา (API Quota หรือ Network Error)");
-        // คืนค่าเดิมถ้าพัง
-        document.getElementById('langSelector').value = 'th';
+        console.error("Translation Failed:", error);
+        alert("แปลภาษาขัดข้อง: " + error.message);
+        selector.value = 'th';
         restoreOriginalTexts();
     } finally {
         loading.style.display = 'none';

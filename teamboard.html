@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Team Board - Smart Building Camp 2025</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,17 +28,19 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Sarabun', sans-serif;
             color: var(--harvard-black);
             line-height: 1.6;
-            /* พื้นหลังลายจุด (Dot Grid) แบบมินิมอล */
             background-color: #fdfdfd;
             background-image: radial-gradient(var(--bg-dots) 1px, transparent 1px);
             background-size: 20px 20px;
             min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         h1,
@@ -47,7 +49,7 @@
             font-family: 'Merriweather', serif;
         }
 
-        /* Header (Keep Original Theme) */
+        /* --- HEADER --- */
         header {
             background-color: var(--harvard-crimson);
             color: var(--text-white);
@@ -55,30 +57,33 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
+            position: fixed;
+            width: 100%;
             top: 0;
-            z-index: 1000;
+            z-index: 2002;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
         }
 
         .logo-area {
+            display: flex;
+            flex-direction: column;
             max-width: 70%;
+            z-index: 1001;
         }
 
         .faculty-name {
-            font-size: 0.75rem;
-            letter-spacing: 1px;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
             opacity: 0.9;
-            display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .project-name {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
-            line-height: 1.3;
-            display: block;
+            line-height: 1.2;
         }
 
         .hamburger {
@@ -86,15 +91,31 @@
             cursor: pointer;
             flex-direction: column;
             gap: 5px;
+            z-index: 2003;
+            padding: 5px;
         }
 
         .hamburger span {
             width: 25px;
             height: 3px;
-            background-color: white;
+            background-color: var(--text-white);
             border-radius: 2px;
+            transition: 0.3s;
         }
 
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* --- NAVIGATION (Slide Menu) --- */
         .nav-menu ul {
             display: flex;
             list-style: none;
@@ -105,9 +126,9 @@
             color: white;
             text-decoration: none;
             font-size: 0.9rem;
-            transition: 0.3s;
             padding: 5px 10px;
             border-radius: 4px;
+            transition: 0.3s;
         }
 
         .nav-menu a:hover {
@@ -115,181 +136,235 @@
             color: var(--gold-accent);
         }
 
-        /* Layout */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- MAIN LAYOUT --- */
         .board-container {
             max-width: 1300px;
-            margin: 40px auto;
+            margin: 120px auto 40px auto;
             padding: 0 20px;
+            overflow: hidden;
         }
 
         .board-header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 20px;
         }
 
         .board-header h1 {
             color: var(--harvard-crimson);
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05);
         }
 
-        .board-header p {
-            color: #666;
-            font-size: 1.1rem;
-            background: white;
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        /* --- TAB NAVIGATION --- */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 30px;
+            position: relative;
         }
 
-        /* --- Minimal Timeline Filter --- */
+        .tab-btn {
+            flex: 1;
+            max-width: 200px;
+            text-align: center;
+            padding: 15px 10px;
+            cursor: pointer;
+            font-family: 'Sarabun', sans-serif;
+            font-weight: 700;
+            color: #aaa;
+            position: relative;
+            transition: 0.3s;
+            user-select: none;
+        }
+
+        .tab-btn.active {
+            color: var(--harvard-crimson);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--harvard-crimson);
+            border-radius: 3px 3px 0 0;
+        }
+
+        /* --- FILTER --- */
         .filter-box {
-            /* ลบพื้นหลังทึบออก ให้ลอยๆ */
-            background: transparent;
-            margin-bottom: 50px;
-            padding: 0 20px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .filter-header-row {
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
-        .year-select-compact {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 2px solid var(--harvard-crimson);
-            font-family: 'Sarabun', sans-serif;
-            font-weight: 700;
-            color: var(--harvard-crimson);
-            background: white;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        }
-
+        .year-select-compact,
         .btn-reset {
-            background: white;
-            border: 2px solid #ddd;
-            color: #888;
             padding: 8px 15px;
             border-radius: 20px;
-            cursor: pointer;
+            border: 1px solid #ccc;
+            background: white;
+            font-family: 'Sarabun';
             font-size: 0.9rem;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
-        .btn-reset:hover {
-            border-color: var(--gold-accent);
-            color: var(--gold-accent);
-            transform: translateY(-2px);
-        }
-
-        /* Timeline Style */
         .month-timeline {
             display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 5px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
             justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
+        }
+
+        .month-timeline::-webkit-scrollbar {
+            display: none;
         }
 
         .timeline-item {
+            flex: 0 0 auto;
+            text-align: center;
             cursor: pointer;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
 
         .timeline-label {
-            font-size: 0.85rem;
-            color: #aaa;
-            font-weight: 600;
-            transition: 0.3s;
+            font-size: 0.8rem;
+            color: #888;
             padding: 5px 12px;
             border-radius: 15px;
             background: white;
             border: 1px solid transparent;
-        }
-
-        /* Active State */
-        .timeline-item:hover .timeline-label {
-            color: var(--harvard-crimson);
-            transform: translateY(-2px);
+            transition: 0.2s;
         }
 
         .timeline-item.active .timeline-label {
             background: var(--harvard-crimson);
             color: white;
-            box-shadow: 0 4px 10px rgba(0, 74, 173, 0.3);
-            transform: scale(1.1);
+            font-weight: bold;
+            box-shadow: 0 3px 8px rgba(0, 74, 173, 0.3);
         }
 
-        .filter-status-text {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #888;
-            margin-top: 20px;
+        /* --- SWIPEABLE CONTENT --- */
+        .swipe-viewport {
+            width: 100%;
+            overflow: hidden;
         }
 
-        /* --- Post-it Cards Style --- */
+        .swipe-wrapper {
+            display: flex;
+            width: 200%;
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .swipe-page {
+            width: 50%;
+            padding: 5px;
+        }
+
+        /* --- CARD GRID --- */
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 40px;
-            /* ห่างกันหน่อยให้ดูเหมือนแปะกระจายๆ */
+            gap: 30px;
             padding-bottom: 100px;
         }
 
         .note-card {
-            /* รูปทรงกระดาษ */
-            border-radius: 2px;
-            /* ขอบมนนิดเดียวเหมือนกระดาษตัด */
-            padding: 25px;
-            color: #333;
+            border-radius: 4px;
+            padding: 20px;
             position: relative;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
             cursor: pointer;
-            animation: popIn 0.5s ease;
-            min-height: 250px;
             display: flex;
             flex-direction: column;
-
-            /* Shadow แบบลอยตัว */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Effect เทปกาวแปะอยู่ข้างบน */
-        .note-card::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%) rotate(-1deg);
-            width: 100px;
-            height: 35px;
-            background-color: rgba(255, 255, 255, 0.4);
-            border-left: 1px dashed rgba(0, 0, 0, 0.05);
-            border-right: 1px dashed rgba(0, 0, 0, 0.05);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            opacity: 0.8;
-            z-index: 10;
+            min-height: 200px;
+            font-size: 0.95rem;
+            background: white;
         }
 
         .note-card:hover {
-            transform: scale(1.05) rotate(0deg) !important;
-            /* เวลา Hover ให้เด้งมาตรงๆ */
-            z-index: 20;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-5px);
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
-        /* Pastel Colors Classes */
+        .note-card::before {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 80px;
+            height: 25px;
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        /* --- DELETE BUTTON --- */
+        .btn-delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #eee;
+            color: #d32f2f;
+            /* สีแดง */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            /* ซ่อนไว้ก่อน */
+            transition: 0.2s;
+            z-index: 5;
+            font-size: 0.9rem;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+            color: white;
+        }
+
+        /* Show delete button on hover or always on mobile */
+        .note-card:hover .btn-delete {
+            opacity: 1;
+        }
+
+        /* Colors */
         .bg-yellow {
             background: #fff9c4;
         }
@@ -310,96 +385,102 @@
             background: #fff3e0;
         }
 
+        .feeling-card {
+            border-radius: 12px;
+        }
+
         .card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            border-bottom: 2px dashed rgba(0, 0, 0, 0.05);
-            padding-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+            padding-bottom: 8px;
+            padding-right: 30px;
+            /* เว้นที่ให้ปุ่มลบ */
         }
 
         .avatar {
-            width: 35px;
-            height: 35px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
+            font-weight: bold;
+            font-size: 0.9rem;
             color: #555;
-            font-size: 1rem;
         }
 
         .team-name {
-            font-family: 'Sarabun', sans-serif;
-            /* หรือใช้ Patrick Hand ถ้าชอบ */
-            font-weight: 800;
-            font-size: 1.15rem;
-            color: #222;
-        }
-
-        .card-body {
-            flex-grow: 1;
+            font-weight: 700;
+            font-size: 1rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .card-body ul {
             list-style: none;
             padding: 0;
-            margin-top: 5px;
-            font-family: 'Sarabun', sans-serif;
-            /* ฟอนต์ลายมือให้อารมณ์โน้ต */
-            font-size: 1rem;
+            margin: 0;
+            font-family: 'Sarabun';
             color: #444;
+            font-size: 0.9rem;
+        }
+
+        .card-body p {
+            font-family: 'Patrick Hand', 'Sarabun', cursive;
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.5;
         }
 
         .card-body li {
-            margin-bottom: 5px;
-            padding-left: 15px;
+            margin-bottom: 3px;
+            padding-left: 12px;
             position: relative;
+            line-height: 1.4;
         }
 
         .card-body li::before {
-            content: '-';
+            content: '•';
             position: absolute;
             left: 0;
             color: #888;
         }
 
         .card-footer {
-            margin-top: 15px;
-            font-size: 0.8rem;
+            margin-top: auto;
+            padding-top: 10px;
+            font-size: 0.75rem;
             color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: flex-end;
-            font-style: italic;
+            text-align: right;
         }
 
-        /* FAB & Modal */
+        /* --- FAB & MODAL --- */
         .fab-btn {
             position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 65px;
-            height: 65px;
+            bottom: 30px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
             background: var(--harvard-crimson);
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.8rem;
             border: none;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0, 74, 173, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 74, 173, 0.4);
             z-index: 900;
             transition: 0.3s;
         }
 
-        .fab-btn:hover {
-            transform: scale(1.1) rotate(90deg);
-            background: var(--gold-accent);
+        .fab-btn:active {
+            transform: scale(0.9);
         }
 
         .modal-overlay {
@@ -408,188 +489,205 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 2005;
             display: none;
-            justify-content: center;
             align-items: center;
-            z-index: 2000;
+            justify-content: center;
             backdrop-filter: blur(5px);
         }
 
         .modal-content {
             background: white;
             width: 90%;
-            max-width: 500px;
+            max-width: 400px;
+            padding: 30px;
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
             border: 1px solid #eee;
-            animation: slideUp 0.3s ease;
+            animation: slideUp 0.3s;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 700;
-            color: var(--harvard-black);
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #eee;
+            padding: 12px;
+            border: 1px solid #ddd;
             border-radius: 10px;
-            font-family: 'Sarabun', sans-serif;
-            transition: 0.3s;
-            background: #fafafa;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: var(--harvard-crimson);
-            background: white;
-            outline: none;
+            font-family: 'Sarabun';
+            background: #f9f9f9;
         }
 
         .btn-actions {
             display: flex;
             justify-content: flex-end;
-            gap: 15px;
-            margin-top: 30px;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel,
+        .btn-submit {
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
         }
 
         .btn-cancel {
-            background: white;
-            border: 2px solid #eee;
-            padding: 10px 25px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #666;
+            background: #eee;
+            color: #555;
         }
 
         .btn-submit {
             background: var(--harvard-crimson);
             color: white;
-            padding: 10px 30px;
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 74, 173, 0.3);
-            transition: 0.3s;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-        }
-
-        #loadingText {
-            text-align: center;
-            width: 100%;
-            grid-column: 1/-1;
-            padding: 40px;
-            color: #999;
-            font-style: italic;
-        }
-
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.8) translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         @media (max-width: 768px) {
             header {
-                flex-wrap: wrap;
-                padding: 15px 20px;
-            }
-
-            .logo-area {
-                text-align: left;
-                max-width: 80%;
-                margin-bottom: 0;
+                padding: 10px 15px;
             }
 
             .hamburger {
                 display: flex;
-                margin-left: auto;
             }
 
             .nav-menu {
-                display: none;
-                width: 100%;
-                margin-top: 20px;
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
+                position: fixed;
+                top: 0;
+                right: -280px;
+                width: 280px;
+                height: 100vh;
+                background: var(--harvard-crimson);
+                padding-top: 60px;
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 2000;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
             }
 
             .nav-menu.active {
-                display: block;
+                right: 0;
             }
 
             .nav-menu ul {
                 flex-direction: column;
                 gap: 0;
-                width: 100%;
             }
 
             .nav-menu a {
                 display: block;
-                padding: 15px 20px;
+                padding: 15px 25px;
+                color: white;
+                font-size: 1.1rem;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                font-size: 1rem;
-                text-align: left;
             }
+
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 0 5px 100px 5px;
+            }
+
+            .note-card {
+                padding: 15px;
+                min-height: 180px;
+                font-size: 0.85rem;
+            }
+
+            .btn-delete {
+                opacity: 1;
+                /* มือถือโชว์ตลอด */
+            }
+
+            .avatar {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8rem;
+            }
+
+            .board-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .month-timeline {
+                justify-content: flex-start;
+                padding-bottom: 10px;
+            }
+
+            .board-container {
+                margin-top: 130px;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .no-data {
+            width: 100%;
+            text-align: center;
+            color: #aaa;
+            padding: 40px;
+            font-style: italic;
+            grid-column: 1/-1;
         }
     </style>
 </head>
 
 <body>
 
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
     <header>
         <div class="logo-area">
-            <span class="faculty-name">FACULTY OF ENGINEERING AND INDUSTRIAL TECHNOLOGY</span>
+            <span class="faculty-name">FACULTY OF ENGINEERING</span>
             <span class="project-name">Bilateral Academic Workshop<br>on Smart Building Model Camp 2025</span>
         </div>
-        <div class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+
+        <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+
         <nav class="nav-menu" id="mobileMenu">
             <ul>
                 <li><a href="index.html">หน้าหลัก</a></li>
                 <li><a href="schedule.html">กำหนดการ</a></li>
+                <li><a href="teamboard.html" style="background:rgba(0,0,0,0.2);">กระดานแปะโน๊ต</a></li>
                 <li><a href="documents.html">คลังเอกสาร</a></li>
                 <li><a href="gallery.html">ภาพกิจกรรม</a></li>
-                <li><a href="teamboard.html" style="color: var(--gold-accent);">กระดานจัดทีม</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="board-container">
         <div class="board-header">
-            <h1>Team Ideas Board</h1>
-            <p>พื้นที่แปะไอเดียและหาเพื่อนร่วมทีม (Online)</p>
+            <h1>Team & Feelings</h1>
+            <p id="headerSubtitle">หาเพื่อนร่วมทีม (Online)</p>
+        </div>
+
+        <div class="tab-nav">
+            <div class="tab-btn active" onclick="switchTab(0)">หาเพื่อนร่วมทีม</div>
+            <div class="tab-btn" onclick="switchTab(1)">แปะโน๊ตแสดงความรู้สึก</div>
         </div>
 
         <div class="filter-box">
@@ -598,42 +696,56 @@
                     <option value="2568">ปี 2568</option>
                     <option value="2569">ปี 2569</option>
                 </select>
-                <button class="btn-reset" onclick="window.resetFilter()"><i class="fas fa-undo"></i> All Months</button>
+                <button class="btn-reset" onclick="window.resetFilter()"><i class="fas fa-undo"></i> All</button>
             </div>
             <div class="month-timeline" id="monthContainer"></div>
-            <div class="filter-status-text" id="filterStatusText">Loading...</div>
         </div>
 
-        <div class="card-grid" id="cardGrid">
-            <div id="loadingText"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลดกระดาน...</div>
+        <div class="swipe-viewport" id="swipeViewport">
+            <div class="swipe-wrapper" id="swipeWrapper">
+                <div class="swipe-page">
+                    <div class="card-grid" id="teamGrid">
+                        <div class="no-data"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลด...</div>
+                    </div>
+                </div>
+                <div class="swipe-page">
+                    <div class="card-grid" id="feelingGrid">
+                        <div class="no-data"><i class="fas fa-circle-notch fa-spin"></i> กำลังโหลด...</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <button class="fab-btn" onclick="openModal()" title="เขียนโน๊ตใหม่"><i class="fas fa-pen"></i></button>
+    <button class="fab-btn" onclick="openModal()"><i class="fas fa-pen"></i></button>
 
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
-            <h2 style="margin-bottom:30px; color:var(--harvard-black); text-align:center;">เขียนโน๊ตใหม่ ✏️</h2>
+            <h3 style="text-align:center; margin-bottom:10px; color:var(--harvard-crimson);" id="modalTitle">
+                เขียนโน๊ตใหม่</h3>
+            <p style="text-align:center; margin-bottom:20px; font-size:0.9rem; color:#666;" id="modalSubtitle"></p>
+
             <div class="form-group">
-                <label>หัวข้อ / ชื่อทีม</label>
-                <input type="text" id="inputTeamName" placeholder="เช่น ทีม Avengers, หาคนทำ Hardware...">
+                <label id="labelName">ชื่อทีม / หัวข้อ</label>
+                <input type="text" id="inputName" placeholder="...">
             </div>
             <div class="form-group">
-                <label>รายละเอียด</label>
-                <textarea id="inputMembers" rows="5" placeholder="รายละเอียดหรือรายชื่อสมาชิก..."></textarea>
+                <label id="labelDesc">รายละเอียด / สมาชิก</label>
+                <textarea id="inputDesc" rows="4" placeholder="..."></textarea>
             </div>
             <div class="btn-actions">
-                <button class="btn-cancel" onclick="closeModal()">ทิ้ง</button>
-                <button class="btn-submit" onclick="window.postNote()">แปะโน๊ต</button>
+                <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
+                <button class="btn-submit" onclick="window.postNote()">โพสต์</button>
             </div>
         </div>
     </div>
 
+    <script src="translator.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- Config เดิมของคุณ ---
         const firebaseConfig = {
             apiKey: "AIzaSyBXGTHx3VwindrxYpoly2ttp5HcumDFEwk",
             authDomain: "sbmc2025-b3429.firebaseapp.com",
@@ -647,44 +759,62 @@
         const db = getFirestore(app);
         const COLLECTION_NAME = "teams";
 
-        let teamsData = [];
+        let allNotes = [];
         let currentYear = 2568;
         let selectedMonthIndex = -1;
-        const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
 
-        // สี Post-it แบบสุ่ม
+        const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
         const cardColors = ['bg-yellow', 'bg-blue', 'bg-pink', 'bg-green', 'bg-orange'];
 
         const q = query(collection(db, COLLECTION_NAME), orderBy("timestamp", "desc"));
-        document.getElementById('loadingText').style.display = 'block';
-
         onSnapshot(q, (snapshot) => {
-            teamsData = [];
+            allNotes = [];
             snapshot.forEach((doc) => {
-                teamsData.push({ id: doc.id, ...doc.data() });
+                allNotes.push({ id: doc.id, ...doc.data() });
             });
-            document.getElementById('loadingText').style.display = 'none';
             applyFilter();
         });
 
         window.postNote = async function () {
-            const name = document.getElementById('inputTeamName').value;
-            const members = document.getElementById('inputMembers').value;
-            if (!name || !members) { alert("กรุณากรอกข้อมูลให้ครบ"); return; }
+            const name = document.getElementById('inputName').value;
+            const desc = document.getElementById('inputDesc').value;
+
+            if (!name || !desc) { alert("กรุณากรอกข้อมูลให้ครบ"); return; }
+
+            const currentTab = window.activeTabIndex || 0;
+            const noteType = currentTab === 0 ? 'team' : 'feeling';
 
             try {
                 await addDoc(collection(db, COLLECTION_NAME), {
+                    type: noteType,
                     name: name,
-                    members: members,
+                    members: desc,
                     date: new Date().toISOString(),
                     timestamp: Date.now()
                 });
                 closeModal();
-                document.getElementById('inputTeamName').value = '';
-                document.getElementById('inputMembers').value = '';
+                document.getElementById('inputName').value = '';
+                document.getElementById('inputDesc').value = '';
                 window.resetFilter();
-            } catch (e) {
-                alert("Error: " + e.message);
+            } catch (e) { alert("Error: " + e.message); }
+        }
+
+        // --- DELETE FUNCTION ---
+        window.deleteNote = async function (id) {
+            event.stopPropagation(); // ป้องกันการเด้ง Event อื่น
+            const pin = prompt("กรุณากรอก PIN เพื่อลบโน๊ต (Admin Only):");
+
+            // รหัส PIN เดียวกับ Gallery
+            if (pin === "1212312121") {
+                if (confirm("ยืนยันการลบโพสต์นี้?")) {
+                    try {
+                        await deleteDoc(doc(db, COLLECTION_NAME, id));
+                    } catch (e) {
+                        alert("ลบไม่สำเร็จ: " + e.message);
+                    }
+                }
+            } else if (pin !== null) {
+                alert("รหัส PIN ไม่ถูกต้อง");
             }
         }
 
@@ -702,72 +832,184 @@
 
         window.selectMonth = function (index) {
             selectedMonthIndex = (selectedMonthIndex === index) ? -1 : index;
-            window.renderMonths();
-            window.applyFilter();
+            window.renderMonths(); window.applyFilter();
         }
 
         window.resetFilter = function () {
-            selectedMonthIndex = -1;
-            window.renderMonths();
-            window.applyFilter();
+            selectedMonthIndex = -1; window.renderMonths(); window.applyFilter();
         }
 
         window.applyFilter = function () {
             const yearSelect = document.getElementById('yearFilter').value;
             currentYear = parseInt(yearSelect);
-            const grid = document.getElementById('cardGrid');
-            grid.innerHTML = '';
 
-            const filteredTeams = teamsData.filter(team => {
-                const d = new Date(team.timestamp);
-                const teamYear = d.getFullYear() + 543;
-                const teamMonth = d.getMonth();
-                return (teamYear === currentYear) && (selectedMonthIndex === -1 || teamMonth === selectedMonthIndex);
+            const timeFiltered = allNotes.filter(note => {
+                const d = new Date(note.timestamp);
+                const noteYear = d.getFullYear() + 543;
+                const noteMonth = d.getMonth();
+                return (noteYear === currentYear) && (selectedMonthIndex === -1 || noteMonth === selectedMonthIndex);
             });
 
-            const monthText = selectedMonthIndex === -1 ? "ทั้งหมด" : thaiMonths[selectedMonthIndex];
-            document.getElementById('filterStatusText').innerText = `${filteredTeams.length} โน๊ต (ปี ${currentYear} / ${monthText})`;
+            const teamNotes = timeFiltered.filter(n => !n.type || n.type === 'team');
+            const feelingNotes = timeFiltered.filter(n => n.type === 'feeling');
 
-            if (filteredTeams.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #aaa; padding: 40px;">- ยังไม่มีโน๊ตในช่วงเวลานี้ -</p>';
-            } else {
-                filteredTeams.forEach(team => createCardHTML(team));
+            renderGrid('teamGrid', teamNotes, 'team');
+            renderGrid('feelingGrid', feelingNotes, 'feeling');
+        }
+
+        function renderGrid(elementId, data, type) {
+            const grid = document.getElementById(elementId);
+            grid.innerHTML = '';
+
+            if (data.length === 0) {
+                grid.innerHTML = '<div class="no-data">- ว่างเปล่า -</div>';
+                return;
             }
-        }
 
-        function createCardHTML(team) {
-            const d = new Date(team.timestamp);
-            const dateStr = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
-            const memberList = team.members.split('\n').map(line => `<li>${line}</li>`).join('');
+            data.forEach(item => {
+                const d = new Date(item.timestamp);
+                const dateStr = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+                const randColor = cardColors[Math.floor(Math.random() * cardColors.length)];
+                const randRotate = Math.floor(Math.random() * 3) - 1.5;
 
-            // สุ่มสีและการหมุน (Rotation) ให้ดูเป็นธรรมชาติ
-            const randColor = cardColors[Math.floor(Math.random() * cardColors.length)];
-            const randRotate = Math.floor(Math.random() * 4) - 2; // -2 ถึง 2 องศา
+                // สร้างปุ่มลบ
+                const deleteBtn = `<div class="btn-delete" onclick="window.deleteNote('${item.id}')"><i class="fas fa-trash"></i></div>`;
 
-            const html = `
-                <div class="note-card ${randColor}" style="transform: rotate(${randRotate}deg);">
-                    <div class="card-header">
-                        <div class="avatar">${team.name.charAt(0).toUpperCase()}</div>
-                        <div class="team-name">${team.name}</div>
+                let contentHTML = '';
+                if (type === 'team') {
+                    const list = item.members.split('\n').map(line => `<li>${line}</li>`).join('');
+                    contentHTML = `<ul>${list}</ul>`;
+                } else {
+                    contentHTML = `<p>${item.members}</p>`;
+                }
+
+                const html = `
+                    <div class="note-card ${randColor} ${type === 'feeling' ? 'feeling-card' : ''}" style="transform: rotate(${randRotate}deg);">
+                        ${deleteBtn}
+                        <div class="card-header">
+                            <div class="avatar">${item.name.charAt(0).toUpperCase()}</div>
+                            <div class="team-name">${item.name}</div>
+                        </div>
+                        <div class="card-body">${contentHTML}</div>
+                        <div class="card-footer"><span>${dateStr}</span></div>
                     </div>
-                    <div class="card-body"><ul>${memberList}</ul></div>
-                    <div class="card-footer"><span>${dateStr}</span></div>
-                </div>
-            `;
-            document.getElementById('cardGrid').insertAdjacentHTML('beforeend', html);
+                `;
+                grid.insertAdjacentHTML('beforeend', html);
+            });
         }
 
+        window.switchTab = switchTab;
         window.renderMonths();
     </script>
 
     <script>
-        function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+        // --- TAB & SWIPE LOGIC ---
+        let currentTab = 0;
+        const wrapper = document.getElementById('swipeWrapper');
+        const tabs = document.querySelectorAll('.tab-btn');
+        const subTitle = document.getElementById('headerSubtitle');
+
+        // Initialize global variable
+        window.activeTabIndex = 0;
+
+        function switchTab(index) {
+            currentTab = index;
+            window.activeTabIndex = index; // Update global var used by module
+
+            tabs.forEach((t, i) => t.classList.toggle('active', i === index));
+
+            const translate = index === 0 ? '0%' : '-50%';
+            wrapper.style.transform = `translateX(${translate})`;
+
+            if (index === 0) {
+                subTitle.innerText = "หาเพื่อนร่วมทีม (Online)";
+            } else {
+                subTitle.innerText = "ความรู้สึกที่มีต่อกิจกรรม";
+            }
+        }
+
+        // --- TOUCH SWIPE ---
+        const viewport = document.getElementById('swipeViewport');
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        viewport.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const threshold = 50;
+            if (touchEndX < touchStartX - threshold) {
+                if (currentTab < 1) switchTab(currentTab + 1);
+            }
+            if (touchEndX > touchStartX + threshold) {
+                if (currentTab > 0) switchTab(currentTab - 1);
+            }
+        }
+
+        // --- MOBILE MENU LOGIC ---
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('menuOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        let menuStartX = 0;
+
+        function toggleMenu() {
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('open');
+        }
+
+        function closeMenu() {
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburger.classList.remove('open');
+        }
+
+        document.addEventListener('touchstart', e => menuStartX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            if (menuStartX - endX > 50 && menu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+
+        // --- MODAL LOGIC ---
         const modal = document.getElementById('modalOverlay');
-        function openModal() { modal.style.display = 'flex'; document.getElementById('inputTeamName').focus(); }
+        const modalTitle = document.getElementById('modalTitle');
+        const modalSubtitle = document.getElementById('modalSubtitle');
+        const labelName = document.getElementById('labelName');
+        const labelDesc = document.getElementById('labelDesc');
+
+        function openModal() {
+            modal.style.display = 'flex';
+
+            if (currentTab === 0) {
+                modalTitle.innerText = "ประกาศหาทีม";
+                modalSubtitle.innerText = "โพสต์เพื่อรวบรวมสมาชิกกลุ่ม";
+                labelName.innerText = "ชื่อทีม / หัวข้อโปรเจกต์";
+                labelDesc.innerText = "รายชื่อสมาชิก / ข้อมูลติดต่อ";
+                document.getElementById('inputName').placeholder = "เช่น ทีม Avengers...";
+                document.getElementById('inputDesc').placeholder = "1. ชื่อ-สกุล\n2. ชื่อ-สกุล\n\nเบอร์ติดต่อ...";
+            } else {
+                modalTitle.innerText = "แชร์ความรู้สึก";
+                modalSubtitle.innerText = "บอกเล่าความประทับใจที่มีต่อกิจกรรม";
+                labelName.innerText = "หัวข้อ / ชื่อเล่นของคุณ";
+                labelDesc.innerText = "ข้อความบรรยายความรู้สึก";
+                document.getElementById('inputName').placeholder = "เช่น สนุกมาก! (จากน้อง A)";
+                document.getElementById('inputDesc').placeholder = "กิจกรรมวันนี้ได้ความรู้เยอะมาก...";
+            }
+
+            document.getElementById('inputName').focus();
+        }
+
         function closeModal() { modal.style.display = 'none'; }
         modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
     </script>
-    <script src="translator.js"></script>
 </body>
 
 </html>

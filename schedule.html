@@ -27,6 +27,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -34,6 +35,7 @@
             background-color: var(--bg-light);
             color: var(--harvard-black);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         h1,
@@ -43,25 +45,78 @@
             font-family: 'Merriweather', serif;
         }
 
-        /* --- Header --- */
+        /* --- HEADER & NAVIGATION (Mobile Slide) --- */
         header {
             background-color: var(--harvard-crimson);
             color: var(--text-white);
-            padding: 15px 40px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
+            position: fixed;
+            width: 100%;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            /* Header อยู่ชั้นพื้นฐาน */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            max-width: 70%;
+            z-index: 1001;
+        }
+
+        .faculty-name {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            display: block;
         }
 
         .project-name {
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 700;
+            line-height: 1.2;
+            font-family: 'Merriweather', serif;
         }
 
+        /* Hamburger Button */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 2001;
+            /* อยู่สูงกว่าเมนูและ Overlay */
+            padding: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-white);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* Menu List */
         .nav-menu ul {
             display: flex;
             list-style: none;
@@ -72,17 +127,42 @@
             color: white;
             text-decoration: none;
             font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 4px;
             transition: 0.3s;
+            font-weight: 500;
         }
 
         .nav-menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
             color: var(--gold-accent);
         }
 
-        /* --- Main Content --- */
+        /* Overlay */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 998;
+            /* อยู่ใต้ Header (เพื่อให้กด Hamburger ได้) แต่อยู่บนเนื้อหา */
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- MAIN CONTENT --- */
         .container {
-            max-width: 1000px;
-            margin: 50px auto;
+            max-width: 1200px;
+            /* เว้นระยะด้านบนให้พ้น Header (Desktop) */
+            margin: 120px auto 50px auto;
             padding: 0 20px;
         }
 
@@ -152,7 +232,6 @@
         .schedule-item {
             display: grid;
             grid-template-columns: 120px 1fr;
-            /* ช่องเวลา vs กิจกรรม */
             padding: 15px 25px;
             border-bottom: 1px solid #f0f0f0;
             transition: background 0.2s;
@@ -183,14 +262,65 @@
 
         .highlight-bg {
             background-color: rgba(196, 154, 108, 0.1);
-            /* สีทองจางๆ */
         }
 
-        /* Responsive */
-        @media (max-width: 600px) {
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+
+            /* Header Adjustments */
+            header {
+                padding: 10px 15px;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            /* Slide-out Menu */
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -280px;
+                width: 280px;
+                height: 100vh;
+                background: var(--harvard-crimson);
+                padding-top: 60px;
+                transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 2000;
+                /* อยู่บนสุด */
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-menu ul {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .nav-menu a {
+                display: block;
+                padding: 15px 25px;
+                color: white;
+                font-size: 1.1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                text-align: left;
+            }
+
+            .nav-menu a:active {
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            /* Content Adjustments */
+            .container {
+                margin-top: 140px;
+                /* ดันลงมาอีกบนมือถือ */
+            }
+
             .schedule-item {
                 grid-template-columns: 1fr;
-                /* Stack on mobile */
                 gap: 5px;
             }
 
@@ -198,9 +328,10 @@
                 font-size: 0.9rem;
             }
 
-            header {
+            .day-header {
                 flex-direction: column;
-                gap: 10px;
+                align-items: flex-start;
+                gap: 5px;
             }
         }
     </style>
@@ -208,14 +339,24 @@
 
 <body>
 
+    <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
     <header>
-        <div class="project-name">Smart Building Camp 2025</div>
-        <nav class="nav-menu">
+        <div class="logo-area">
+            <span class="faculty-name">FACULTY OF ENGINEERING AND INDUSTRIAL TECHNOLOGY</span>
+            <span class="project-name">Bilateral Academic Workshop<br>on Smart Building Model Camp 2025</span>
+        </div>
+
+        <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+
+        <nav class="nav-menu" id="mobileMenu">
             <ul>
                 <li><a href="index.html">หน้าหลัก</a></li>
-                <li><a href="schedule.html"
-                        style="color: var(--gold-accent); border-bottom: 1px solid var(--gold-accent);">กำหนดการ</a>
-                </li>
+                <li><a href="schedule.html" style="background:rgba(255,255,255,0.1);">กำหนดการ</a></li>
+                <li><a href="teamboard.html">กระดานจัดทีม</a></li>
+                <li><a href="documents.html">คลังเอกสาร</a></li>
                 <li><a href="gallery.html">ภาพกิจกรรม</a></li>
             </ul>
         </nav>
@@ -375,7 +516,37 @@
         style="background: var(--harvard-black); color: white; text-align: center; padding: 40px; margin-top: 50px;">
         <p>&copy; 2025 Smart Building Model Camp.</p>
     </footer>
+
     <script src="translator.js"></script>
+
+    <script>
+        // Mobile Menu Logic
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('menuOverlay');
+        const hamburger = document.getElementById('hamburgerBtn');
+        let startX = 0;
+
+        function toggleMenu() {
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('open');
+        }
+
+        function closeMenu() {
+            menu.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburger.classList.remove('open');
+        }
+
+        // Swipe to Close
+        document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            const endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50 && menu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+    </script>
 </body>
 
 </html>
