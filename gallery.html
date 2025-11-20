@@ -155,7 +155,6 @@
         .container {
             max-width: 1200px;
             margin: 120px auto 50px auto;
-            /* เว้น Header */
             padding: 0 20px;
         }
 
@@ -219,6 +218,19 @@
             gap: 5px;
         }
 
+        .badge-local {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--gold-accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            z-index: 5;
+        }
+
         .card-content {
             padding: 20px;
         }
@@ -239,14 +251,15 @@
             line-height: 1.4;
         }
 
-        /* Lightbox */
+        /* --- Lightbox FIX --- */
         .lightbox {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
+            /* เพิ่มความเข้มพื้นหลัง */
             z-index: 3000;
             display: none;
             justify-content: center;
@@ -264,18 +277,50 @@
             max-height: 80vh;
             border-radius: 4px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
+            /* สำคัญ: ต้องมี position เพื่อให้ z-index ทำงาน */
+            z-index: 3005;
+            /* ค่าต่ำกว่าปุ่ม */
         }
 
         .lightbox-caption {
             color: white;
             margin-top: 15px;
             font-size: 1.1rem;
+            z-index: 3005;
         }
 
         .lightbox-counter {
             color: #aaa;
             font-size: 0.9rem;
             margin-top: 5px;
+            z-index: 3005;
+        }
+
+        /* --- เพิ่มลงใน Style เดิม --- */
+        .lb-download {
+            position: absolute;
+            top: 20px;
+            right: 80px;
+            /* วางข้างปุ่มปิด */
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            z-index: 3010;
+            padding: 10px;
+            transition: 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lb-download:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--gold-accent);
         }
 
         .lb-close {
@@ -283,8 +328,13 @@
             top: 20px;
             right: 30px;
             color: white;
-            font-size: 2rem;
+            font-size: 3rem;
+            /* ปรับให้ใหญ่ขึ้นกดง่ายขึ้น */
             cursor: pointer;
+            z-index: 3010;
+            /* ค่าสูงสุด: อยู่เหนือรูปแน่นอน */
+            padding: 10px;
+            /* เพิ่มพื้นที่กด */
         }
 
         .lb-nav {
@@ -292,12 +342,16 @@
             top: 50%;
             transform: translateY(-50%);
             color: white;
-            font-size: 2rem;
+            font-size: 3rem;
+            /* ปรับให้ใหญ่ขึ้น */
             cursor: pointer;
             padding: 20px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 50%;
             transition: 0.3s;
+            z-index: 3010;
+            /* ค่าสูงสุด: อยู่เหนือรูปแน่นอน */
+            user-select: none;
         }
 
         .lb-nav:hover {
@@ -305,11 +359,11 @@
         }
 
         .lb-prev {
-            left: 20px;
+            left: 15px;
         }
 
         .lb-next {
-            right: 20px;
+            right: 15px;
         }
 
         /* Admin & Modal */
@@ -516,7 +570,6 @@
             }
         }
 
-        /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
             header {
                 padding: 10px 15px;
@@ -526,27 +579,22 @@
                 display: flex;
             }
 
-            /* Slide-out Menu */
             .nav-menu {
                 position: fixed;
                 top: 0;
                 right: -280px;
-                /* ซ่อนไว้ทางขวา */
                 width: 280px;
                 height: 100vh;
                 background: var(--harvard-crimson);
                 padding-top: 60px;
                 transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 2000;
-                /* แก้ไข: ต้องสูงกว่า Overlay (1500) */
                 box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
             }
 
             .nav-menu.active {
                 right: 0;
             }
-
-            /* เลื่อนออกมา */
 
             .nav-menu ul {
                 flex-direction: column;
@@ -566,9 +614,82 @@
                 background: rgba(255, 255, 255, 0.2);
             }
 
-            /* Content Adjustments */
             .container {
                 margin-top: 140px;
+            }
+
+            .container {
+                padding: 0 10px;
+                /* ลดขอบด้านข้าง */
+            }
+
+            .gallery-title {
+                font-size: 1.8rem;
+                /* ลดขนาดหัวข้อ */
+                margin-bottom: 20px;
+            }
+
+            .gallery-grid {
+                /* บังคับ 3 คอลัมน์ และลดช่องว่างระหว่างการ์ด */
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .gallery-card {
+                border-radius: 6px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .img-wrapper {
+                height: 90px;
+                /* ปรับความสูงรูปให้เป็นสี่เหลี่ยมจัตุรัสมากขึ้น */
+            }
+
+            .card-content {
+                padding: 6px;
+                /* ลดพื้นที่ว่างข้อความ */
+            }
+
+            .card-title {
+                font-size: 0.7rem;
+                /* ลดขนาดฟอนต์ชื่ออัลบั้ม */
+                line-height: 1.2;
+                /* ตัดคำถ้าขื่อยามเกิน 2 บรรทัด */
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .card-date {
+                display: none;
+                /* ซ่อนวันที่ในมุมมองมือถือเพื่อให้ดูสะอาดตา */
+            }
+
+            .badge-album {
+                font-size: 0.6rem;
+                padding: 2px 5px;
+            }
+
+            /* --- Lightbox Mobile --- */
+            .lb-nav {
+                display: none;
+                /* ซ่อนปุ่มลูกศรซ้ายขวา (ใช้ปัดเอา) */
+            }
+
+            .lb-close {
+                top: 15px;
+                right: 15px;
+                font-size: 2.5rem;
+            }
+
+            .lb-download {
+                top: 15px;
+                right: 60px;
+                /* ขยับปุ่มดาวน์โหลดเข้าที่ */
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -592,14 +713,14 @@
             <ul>
                 <li><a href="index.html">หน้าหลัก</a></li>
                 <li><a href="schedule.html">กำหนดการ</a></li>
-                <li><a href="teamboard.html">กระดานจัดทีม</a></li>
+                <li><a href="teamboard.html">กระดานแปะโน๊ต</a></li>
                 <li><a href="documents.html">คลังเอกสาร</a></li>
                 <li><a href="gallery.html" style="background:rgba(255,255,255,0.1);">ภาพกิจกรรม</a></li>
             </ul>
         </nav>
     </header>
 
-    <div class="admin-trigger" onclick="openAdminModal()" title="Admin Upload">
+    <div class="admin-trigger" onclick="window.openAdminModal()" title="Admin Upload">
         <i class="fas fa-cog"></i>
     </div>
 
@@ -612,14 +733,14 @@
 
     <div class="modal-overlay" id="adminModal">
         <div class="modal-content">
-            <button class="btn-close" onclick="closeAdminModal()">&times;</button>
+            <button class="btn-close" onclick="window.closeAdminModal()">&times;</button>
 
             <div id="authSection" class="auth-section active">
                 <h3 style="margin-bottom: 20px; text-align: center; color: var(--harvard-crimson);">Admin Login</h3>
                 <div class="form-group">
                     <input type="password" id="pinInput" placeholder="กรอก PIN เพื่อเข้าสู่ระบบ...">
                 </div>
-                <button onclick="checkPin()" class="btn-full btn-crimson">เข้าสู่ระบบ</button>
+                <button onclick="window.checkPin()" class="btn-full btn-crimson">เข้าสู่ระบบ</button>
                 <p id="loginMsg" style="color: red; font-size: 0.85rem; margin-top: 10px; text-align: center;"></p>
             </div>
 
@@ -630,9 +751,9 @@
                     <label>รูปแบบการอัปโหลด</label>
                     <div class="type-selector">
                         <label class="radio-label"><input type="radio" name="uploadType" value="single" checked
-                                onchange="toggleUploadType()"> รูปเดี่ยว</label>
+                                onchange="window.toggleUploadType()"> รูปเดี่ยว</label>
                         <label class="radio-label"><input type="radio" name="uploadType" value="album"
-                                onchange="toggleUploadType()"> สร้างอัลบั้ม</label>
+                                onchange="window.toggleUploadType()"> สร้างอัลบั้ม</label>
                     </div>
                 </div>
 
@@ -661,10 +782,17 @@
     </div>
 
     <div class="lightbox" id="lightbox">
-        <span class="lb-close" onclick="closeLightbox()">&times;</span>
-        <div class="lb-nav lb-prev" onclick="changeImage(-1)">&#10094;</div>
-        <div class="lb-nav lb-next" onclick="changeImage(1)">&#10095;</div>
+        <div class="lb-download" onclick="window.downloadCurrentImg()" title="ดาวน์โหลดรูปภาพ">
+            <i class="fas fa-download"></i>
+        </div>
+
         <img src="" class="lightbox-img" id="lbImage">
+
+        <span class="lb-close" onclick="window.closeLightbox()">&times;</span>
+
+        <div class="lb-nav lb-prev" onclick="window.changeImage(-1)">&#10094;</div>
+        <div class="lb-nav lb-next" onclick="window.changeImage(1)">&#10095;</div>
+
         <div class="lightbox-caption" id="lbCaption"></div>
         <div class="lightbox-counter" id="lbCounter"></div>
     </div>
@@ -676,7 +804,6 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        // --- ⚠️⚠️ วาง Config เดิมของคุณตรงนี้ ⚠️⚠️ ---
         const firebaseConfig = {
             apiKey: "AIzaSyBXGTHx3VwindrxYpoly2ttp5HcumDFEwk",
             authDomain: "sbmc2025-b3429.firebaseapp.com",
@@ -691,63 +818,101 @@
         const storage = getStorage(app);
         const COLLECTION_NAME = "gallery";
 
+        // ตัวแปร Global
         let currentViewerImages = [];
         let currentViewerIndex = 0;
-        let galleryData = [];
+        let firebaseData = [];
         let isAdmin = false;
 
-        // Real-time Listener
-        const q = query(collection(db, COLLECTION_NAME), orderBy("timestamp", "desc"));
-        const loadingText = document.getElementById('loadingText');
+        // ข้อมูล Local (ตัวอย่าง)
+        const localAlbumObject = {
+            id: "local_prep_1",
+            title: "เตรียมการโครงการ 1",
+            date: "2025-11-20",
+            type: "album",
+            images: Array.from({ length: 8 }, (_, i) => `images/เตรียมการโครงการ_1/${i + 1}.jpg`), // สร้าง Array รูปภาพอัตโนมัติ
+            timestamp: new Date("2025-11-20").getTime() + 999999999, // ให้แสดงผลบนสุดเสมอ
+            isLocal: true
+        };
 
-        loadingText.style.display = 'block';
-
-        onSnapshot(q, (snapshot) => {
+        // --- ฟังก์ชันแสดงผลหน้าเว็บ ---
+        function renderGallery() {
             const grid = document.getElementById('galleryGrid');
             grid.innerHTML = '';
-            loadingText.style.display = 'none';
-            galleryData = [];
 
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const item = { id: docSnap.id, ...data };
-                galleryData.push(item);
-                createGalleryCard(item);
-            });
+            // รวมข้อมูล Firebase และ Local
+            let combinedData = [...firebaseData, localAlbumObject];
 
-            if (snapshot.empty) {
-                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#888;">ยังไม่มีภาพกิจกรรม</p>';
+            // เรียงลำดับตามเวลาล่าสุด
+            combinedData.sort((a, b) => b.timestamp - a.timestamp);
+
+            if (combinedData.length === 0) {
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#888; padding: 20px;">ยังไม่มีภาพกิจกรรม</p>';
+                return;
             }
-        });
+
+            combinedData.forEach(item => createGalleryCard(item));
+            const loadingText = document.getElementById('loadingText');
+            if (loadingText) loadingText.style.display = 'none';
+        }
 
         function createGalleryCard(item) {
-            const dateStr = new Date(item.date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
-            // Check if images array exists and has items
+            let dateStr = "-";
+            if (item.date) {
+                const d = new Date(item.date);
+                dateStr = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: '2-digit' });
+            }
+
+            // รูปปกคือรูปแรกของอัลบั้ม
             const coverImg = (item.images && item.images.length > 0) ? item.images[0] : '';
 
             let badgeHTML = '';
-            if (item.type === 'album' && item.images && item.images.length > 1) {
-                badgeHTML = `<div class="badge-album"><i class="fas fa-images"></i> ${item.images.length} รูป</div>`;
+            if (item.images && item.images.length > 1) {
+                badgeHTML += `<div class="badge-album"><i class="fas fa-images"></i> ${item.images.length} รูป</div>`;
+            }
+            if (item.isLocal) {
+                badgeHTML += `<div class="badge-local">ไฟล์ในเครื่อง</div>`;
             }
 
-            const deleteBtnClass = isAdmin ? 'btn-delete show' : 'btn-delete';
-            const deleteBtn = `<i class="fas fa-trash ${deleteBtnClass}" onclick="window.deleteGallery('${item.id}')" title="ลบรูปภาพ"></i>`;
+            // ปุ่มลบ (แสดงเฉพาะ Admin และไม่ใช่ไฟล์ Local)
+            const deleteBtnClass = (isAdmin && !item.isLocal) ? 'btn-delete show' : 'btn-delete';
+            const deleteBtn = `<i class="fas fa-trash ${deleteBtnClass}" onclick="event.stopPropagation(); window.deleteGallery('${item.id}')" title="ลบรูปภาพ"></i>`;
 
             const html = `
-                <div class="gallery-card" onclick="window.openLightbox('${item.id}')">
-                    ${deleteBtn}
-                    <div class="img-wrapper">
-                        <img src="${coverImg}" alt="${item.title}">
-                        ${badgeHTML}
-                    </div>
-                    <div class="card-content">
-                        <span class="card-date">${dateStr}</span>
-                        <h3 class="card-title">${item.title}</h3>
-                    </div>
+            <div class="gallery-card" onclick="window.openLightbox('${item.id}')">
+                ${deleteBtn}
+                <div class="img-wrapper">
+                    <img src="${coverImg}" alt="${item.title}" loading="lazy"
+                         onerror="this.onerror=null; this.src='https://via.placeholder.com/300x220?text=Image+Error';">
+                    ${badgeHTML}
                 </div>
-            `;
-            grid.insertAdjacentHTML('beforeend', html);
+                <div class="card-content">
+                    <span class="card-date">${dateStr}</span>
+                    <h3 class="card-title">${item.title}</h3>
+                </div>
+            </div>
+        `;
+            document.getElementById('galleryGrid').insertAdjacentHTML('beforeend', html);
         }
+
+        // --- Firebase Realtime Listener ---
+        const q = query(collection(db, COLLECTION_NAME), orderBy("timestamp", "desc"));
+        onSnapshot(q, (snapshot) => {
+            firebaseData = [];
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                firebaseData.push({ id: docSnap.id, ...data, isLocal: false });
+            });
+            renderGallery();
+        }, (error) => {
+            console.warn("Firebase Reading Error:", error);
+            // กรณีอ่านไม่ได้ ให้แสดง Local อย่างเดียว
+            renderGallery();
+        });
+
+        // ==========================================
+        // --- Admin Upload & Functions ---
+        // ==========================================
 
         window.checkPin = function () {
             const pin = document.getElementById('pinInput').value;
@@ -755,7 +920,7 @@
                 isAdmin = true;
                 document.getElementById('authSection').classList.remove('active');
                 document.getElementById('uploadSection').classList.add('active');
-                document.querySelectorAll('.btn-delete').forEach(btn => btn.classList.add('show'));
+                renderGallery(); // รีเฟรชเพื่อโชว์ปุ่มลบ
                 document.getElementById('loginMsg').innerText = "";
             } else {
                 document.getElementById('loginMsg').innerText = "รหัส PIN ไม่ถูกต้อง";
@@ -769,7 +934,7 @@
             const type = document.querySelector('input[name="uploadType"]:checked').value;
 
             if (!title || !date || fileInput.files.length === 0) {
-                alert("กรุณากรอกข้อมูลให้ครบ"); return;
+                alert("กรุณากรอกข้อมูลให้ครบถ้วน"); return;
             }
 
             const files = Array.from(fileInput.files);
@@ -779,64 +944,161 @@
             const statusText = document.getElementById('statusText');
 
             saveBtn.disabled = true;
-            saveBtn.innerText = "กำลังอัปโหลด... (ห้ามปิดหน้าเว็บ)";
+            saveBtn.innerText = "กำลังอัปโหลด...";
             progressContainer.style.display = 'block';
-            statusText.innerText = "กำลังเตรียมไฟล์...";
 
             try {
                 const imageUrls = [];
                 let uploadedCount = 0;
 
+                // Loop อัปโหลดทีละไฟล์
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
-                    const storageRef = ref(storage, 'gallery/' + Date.now() + '_' + file.name);
+                    // ตั้งชื่อไฟล์ให้ไม่ซ้ำ
+                    const storageRef = ref(storage, 'gallery/' + Date.now() + '_' + Math.floor(Math.random() * 1000) + '_' + file.name);
+
                     statusText.innerText = `กำลังอัปโหลดรูปที่ ${i + 1}/${files.length}`;
+
                     await uploadBytes(storageRef, file);
                     const url = await getDownloadURL(storageRef);
                     imageUrls.push(url);
+
                     uploadedCount++;
                     progressBar.style.width = `${(uploadedCount / files.length) * 100}%`;
                 }
 
-                statusText.innerText = "กำลังบันทึกข้อมูล...";
+                statusText.innerText = "กำลังบันทึกข้อมูลลงฐานข้อมูล...";
 
+                // บันทึกลง Firestore
                 await addDoc(collection(db, COLLECTION_NAME), {
                     type: type,
                     title: title,
                     date: date,
-                    images: imageUrls,
+                    images: imageUrls, // เก็บเป็น Array ของ URL
                     timestamp: Date.now()
                 });
 
-                alert("อัปโหลดสำเร็จ!");
+                alert("อัปโหลดสำเร็จเรียบร้อย!");
 
+                // Reset Form
                 document.getElementById('imgTitle').value = '';
                 document.getElementById('imgFile').value = '';
                 progressBar.style.width = '0%';
                 progressContainer.style.display = 'none';
                 statusText.innerText = '';
-                saveBtn.disabled = false;
-                saveBtn.innerText = "บันทึกข้อมูล";
+
+                // ปิด Modal
+                window.closeAdminModal();
 
             } catch (err) {
                 console.error(err);
                 alert("เกิดข้อผิดพลาด: " + err.message);
+            } finally {
                 saveBtn.disabled = false;
-                saveBtn.innerText = "ลองใหม่อีกครั้ง";
+                saveBtn.innerText = "เริ่มอัปโหลด";
             }
         }
 
         window.deleteGallery = async function (id) {
-            event.stopPropagation();
-            if (confirm("ต้องการลบโพสต์นี้ใช่หรือไม่?")) {
+            // event.stopPropagation ถูกเรียกใน HTML แล้ว
+            if (confirm("คุณต้องการลบอัลบั้มรูปนี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้")) {
                 try {
                     await deleteDoc(doc(db, COLLECTION_NAME, id));
+                    // ไม่ต้อง alert, onSnapshot จะทำงานและรีเฟรชหน้าเอง
                 } catch (e) {
-                    alert("Error: " + e.message);
+                    alert("Error deleting: " + e.message);
                 }
             }
         }
 
+        // ==========================================
+        // --- Lightbox Logic (แก้ไขใหม่) ---
+        // ==========================================
+
+        window.openLightbox = function (id) {
+            // หาข้อมูลจากทั้ง Firebase และ Local
+            const allData = [...firebaseData, localAlbumObject];
+            const item = allData.find(i => i.id === id);
+
+            if (!item) return;
+
+            currentViewerImages = item.images || [];
+            currentViewerIndex = 0; // เริ่มที่รูปแรก
+
+            updateLightboxContent(item.title);
+            document.getElementById('lightbox').classList.add('active');
+        }
+
+        window.closeLightbox = () => document.getElementById('lightbox').classList.remove('active');
+
+        window.changeImage = function (direction) {
+            currentViewerIndex += direction;
+
+            // Loop กลับไปมา
+            if (currentViewerIndex >= currentViewerImages.length) currentViewerIndex = 0;
+            if (currentViewerIndex < 0) currentViewerIndex = currentViewerImages.length - 1;
+
+            updateLightboxContent();
+        }
+
+        // ฟังก์ชันดาวน์โหลดรูปปัจจุบัน
+        window.downloadCurrentImg = async function () {
+            if (currentViewerImages.length === 0) return;
+
+            const imgUrl = currentViewerImages[currentViewerIndex];
+            const link = document.createElement('a');
+            link.href = imgUrl;
+            link.target = "_blank";
+            link.download = `SmartBuilding_${Date.now()}.jpg`;
+
+            // พยายาม Fetch รูปมาเป็น Blob เพื่อบังคับดาวน์โหลด (แก้ปัญหาเปิด Tab ใหม่แทนที่จะโหลด)
+            try {
+                const response = await fetch(imgUrl);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                link.href = blobUrl;
+                link.click();
+                URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+                // ถ้า Fetch ไม่ได้ (ติด CORS) ให้เปิด Tab ใหม่แทน
+                console.log("Direct download failed, opening in new tab...");
+                link.click();
+            }
+        }
+
+        function updateLightboxContent(titleOverride) {
+            const img = document.getElementById('lbImage');
+            const caption = document.getElementById('lbCaption');
+            const counter = document.getElementById('lbCounter');
+            const prevBtn = document.querySelector('.lb-prev');
+            const nextBtn = document.querySelector('.lb-next');
+
+            if (currentViewerImages.length > 0) {
+                img.src = currentViewerImages[currentViewerIndex];
+            }
+
+            // ถ้ามีชื่อกิจกรรมส่งมา (ตอนเปิดครั้งแรก) ให้ตั้งค่า
+            if (titleOverride) {
+                // เก็บชื่อไว้ใน attribute เพื่อใช้ตอนเลื่อนรูป
+                caption.setAttribute('data-title', titleOverride);
+                caption.innerText = titleOverride;
+            } else {
+                // ดึงชื่อเดิมมาแสดง
+                caption.innerText = caption.getAttribute('data-title') || "";
+            }
+
+            if (currentViewerImages.length > 1) {
+                counter.innerText = `รูปที่ ${currentViewerIndex + 1} / ${currentViewerImages.length}`;
+                prevBtn.style.display = 'block';
+                nextBtn.style.display = 'block';
+            } else {
+                counter.innerText = '';
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        // Helper Functions for UI
         window.openAdminModal = () => document.getElementById('adminModal').style.display = 'flex';
         window.closeAdminModal = () => document.getElementById('adminModal').style.display = 'none';
 
@@ -845,51 +1107,46 @@
             const fileInput = document.getElementById('imgFile');
             if (type === 'album') {
                 fileInput.setAttribute('multiple', '');
-                document.getElementById('fileLabel').innerText = "เลือกหลายรูป (Ctrl+Click)";
+                document.getElementById('fileLabel').innerText = "เลือกหลายรูป (กด Ctrl ค้างเพื่อเลือก)";
             } else {
                 fileInput.removeAttribute('multiple');
                 document.getElementById('fileLabel').innerText = "เลือกไฟล์รูปภาพ";
             }
         }
+        // ==========================================
+        // --- Touch Swipe Logic (สำหรับมือถือ) ---
+        // ==========================================
 
-        window.openLightbox = function (id) {
-            const item = galleryData.find(i => i.id === id);
-            if (!item) return;
-            currentViewerImages = item.images || [];
-            currentViewerIndex = 0;
-            updateLightboxContent(item.title);
-            document.getElementById('lightbox').classList.add('active');
-        }
-        window.closeLightbox = () => document.getElementById('lightbox').classList.remove('active');
+        const lightboxEl = document.getElementById('lightbox');
+        let touchStartX = 0;
+        let touchEndX = 0;
 
-        window.changeImage = function (direction) {
-            currentViewerIndex += direction;
-            if (currentViewerIndex >= currentViewerImages.length) currentViewerIndex = 0;
-            if (currentViewerIndex < 0) currentViewerIndex = currentViewerImages.length - 1;
-            updateLightboxContent();
-        }
+        // เมื่อเริ่มแตะหน้าจอ
+        lightboxEl.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
 
-        function updateLightboxContent(titleOverride) {
-            const img = document.getElementById('lbImage');
-            const caption = document.getElementById('lbCaption');
-            const counter = document.getElementById('lbCounter');
+        // เมื่อปล่อยนิ้ว
+        lightboxEl.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
 
-            if (currentViewerImages.length > 0) {
-                img.src = currentViewerImages[currentViewerIndex];
+        function handleSwipe() {
+            // คำนวณระยะทางการปัด (Sensitivity 50px)
+            const swipeThreshold = 50;
+
+            if (touchEndX < touchStartX - swipeThreshold) {
+                // ปัดไปทางซ้าย (นิ้วเลื่อนซ้าย = ดูรูปถัดไป)
+                window.changeImage(1);
             }
 
-            if (titleOverride) caption.innerText = titleOverride;
-
-            if (currentViewerImages.length > 1) {
-                counter.innerText = `รูปที่ ${currentViewerIndex + 1} / ${currentViewerImages.length}`;
-                document.querySelector('.lb-prev').style.display = 'block';
-                document.querySelector('.lb-next').style.display = 'block';
-            } else {
-                counter.innerText = '';
-                document.querySelector('.lb-prev').style.display = 'none';
-                document.querySelector('.lb-next').style.display = 'none';
+            if (touchEndX > touchStartX + swipeThreshold) {
+                // ปัดไปทางขวา (นิ้วเลื่อนขวา = ดูรูปก่อนหน้า)
+                window.changeImage(-1);
             }
         }
+
     </script>
 
     <script>
