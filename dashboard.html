@@ -402,6 +402,88 @@
 
             /* ซ่อนปุ่มเลื่อน ใช้ปัดเอา */
         }
+
+        /* --- CSS Dropdown Menu --- */
+
+        /* 1. กำหนดให้เมนูแม่เป็นจุดอ้างอิง */
+        .nav-menu li.has-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* 2. ตัวเมนูย่อย (ซ่อนไว้เป็นค่าเริ่มต้น) */
+        .nav-menu .sub-menu {
+            display: none;
+            /* สำคัญ: ซ่อนไว้ก่อน */
+            position: absolute;
+            /* ลอยเหนือเลเยอร์อื่น */
+            top: 100%;
+            /* อยู่ใต้เมนูแม่ */
+            left: 0;
+            background-color: var(--harvard-crimson);
+            /* สีพื้นหลัง */
+            min-width: 200px;
+            /* ความกว้าง */
+            flex-direction: column;
+            /* เรียงแนวตั้ง */
+            padding: 10px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            /* เงา */
+            z-index: 9999;
+            border-radius: 0 0 5px 5px;
+            gap: 0 !important;
+            /* ลบช่องว่างระหว่างบรรทัดที่อาจติดมาจาก ul หลัก */
+        }
+
+        /* 3. คำสั่งแสดงเมนูย่อย เมื่อเอาเมาส์ชี้ (Hover) ที่เมนูแม่ */
+        .nav-menu li.has-dropdown:hover .sub-menu {
+            display: flex;
+            /* แสดงออกมา */
+        }
+
+        /* 4. ปรับแต่งลิงก์ในเมนูย่อย */
+        .nav-menu .sub-menu li a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            white-space: nowrap;
+            /* ไม่ให้ตัดบรรทัด */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            /* เส้นคั่นบางๆ */
+        }
+
+        /* Effect ตอนชี้เมนูย่อย */
+        .nav-menu .sub-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: var(--gold-accent);
+        }
+
+        /* --- รองรับมือถือ (Mobile) --- */
+        @media (max-width: 768px) {
+            .nav-menu li.has-dropdown {
+                flex-wrap: wrap;
+                /* ให้เมนูย่อยตกลงมาด้านล่างได้ */
+            }
+
+            .nav-menu .sub-menu {
+                position: static;
+                /* บนมือถือไม่ต้องลอย */
+                display: none;
+                /* ซ่อนไว้ก่อนเหมือนกัน */
+                width: 100%;
+                box-shadow: none;
+                background-color: rgba(0, 0, 0, 0.2);
+                /* สีเข้มขึ้นนิดนึง */
+                padding-left: 20px;
+                /* ย่อหน้าเข้าไป */
+            }
+
+            /* บนมือถือ ถ้าจะให้แสดงต้องกด หรือเอาเมาส์ชี้ (Behavior บนมือถืออาจต้องใช้ JS เพิ่มถ้าจะให้ดีที่สุด แต่แบบนี้คือ Basic Hover) */
+            .nav-menu li.has-dropdown:hover .sub-menu {
+                display: flex;
+            }
+        }
     </style>
 </head>
 
