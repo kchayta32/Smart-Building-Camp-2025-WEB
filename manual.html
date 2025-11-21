@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Manual - Smart Building Camp</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --harvard-crimson: #004aad;
+            --gold-accent: #f97825;
+            --bg-light: #f4f6f8;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-color);
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background-color: var(--harvard-crimson);
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Merriweather', serif;
+            font-size: 1.2rem;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            color: var(--harvard-crimson);
+            margin-bottom: 10px;
+        }
+
+        .symbol-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .symbol-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--harvard-crimson);
+            transition: transform 0.3s;
+        }
+
+        .symbol-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .symbol-img-box {
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+            border-radius: 50%;
+            border: 1px solid #eee;
+        }
+
+        .symbol-img-box img {
+            max-width: 70%;
+            max-height: 70%;
+            object-fit: contain;
+        }
+
+        .symbol-info h3 {
+            margin: 0 0 5px 0;
+            color: var(--harvard-crimson);
+            font-size: 1.3rem;
+        }
+
+        .symbol-info .eng-name {
+            color: #888;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .symbol-info p {
+            margin: 0;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 600px) {
+            .symbol-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .symbol-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .symbol-img-box {
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1><i class="fas fa-book"></i> คู่มือสัญลักษณ์ระบบ (System Symbols)</h1>
+        <a href="index.html"><i class="fas fa-home"></i> หน้าหลัก</a>
+    </header>
+
+    <div class="container">
+        <div class="section-header">
+            <h2>สัญลักษณ์อุปกรณ์ (Device Symbols)</h2>
+            <p>รายการสัญลักษณ์ที่ใช้ในแบบแปลน Smart Building Model Camp 2025</p>
+        </div>
+
+        <div class="symbol-list">
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/PIR.png" alt="PIR Sensor"></div>
+                <div class="symbol-info">
+                    <h3>เซนเซอร์ตรวจจับความเคลื่อนไหว</h3>
+                    <span class="eng-name">PIR Sensor (Passive Infrared)</span>
+                    <p>อุปกรณ์ตรวจจับรังสีอินฟราเรดจากร่างกายสิ่งมีชีวิต
+                        ใช้สำหรับระบบรักษาความปลอดภัยหรือเปิด-ปิดไฟอัตโนมัติเมื่อมีคนเดินผ่าน</p>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/BUTTON.png" alt="Button"></div>
+                <div class="symbol-info">
+                    <h3>สวิตช์ปุ่มกด</h3>
+                    <span class="eng-name">Push Button Switch</span>
+                    <p>อุปกรณ์รับคำสั่ง (Input) จากผู้ใช้โดยการกด เพื่อสั่งงานระบบ เช่น กดกริ่ง, กดเพื่อเปิดไฟ
+                        หรือกดเพื่อเริ่มการทำงาน</p>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/LED.png" alt="LED"></div>
+                <div class="symbol-info">
+                    <h3>หลอดไฟแอลอีดี</h3>
+                    <span class="eng-name">LED Light</span>
+                    <p>อุปกรณ์แสดงผล (Output) ในรูปแบบแสงสว่าง ใช้แสดงสถานะการทำงานของระบบ หรือให้แสงสว่างภายในบ้านจำลอง
+                    </p>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/RELAY.png" alt="Relay"></div>
+                <div class="symbol-info">
+                    <h3>รีเลย์สวิตช์</h3>
+                    <span class="eng-name">Relay Module</span>
+                    <p>สวิตช์ตัดต่อวงจรไฟฟ้าที่ควบคุมด้วยไฟฟ้า ใช้สำหรับให้ไมโครคอนโทรลเลอร์ควบคุมอุปกรณ์ที่ใช้ไฟสูงกว่า
+                        เช่น หลอดไฟบ้าน หรือพัดลม</p>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/REED_SWITCH.png" alt="Reed Switch"></div>
+                <div class="symbol-info">
+                    <h3>สวิตช์แม่เหล็ก</h3>
+                    <span class="eng-name">Reed Switch / Magnetic Switch</span>
+                    <p>เซนเซอร์ตรวจจับการเปิด-ปิดประตูหน้าต่าง ทำงานโดยอาศัยสนามแม่เหล็ก เมื่อแม่เหล็กแยกออกจากกัน
+                        ระบบจะแจ้งเตือนว่าประตูเปิดอยู่</p>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/SERVO.png" alt="Servo Motor"></div>
+                <div class="symbol-info">
+                    <h3>เซอร์โวมอเตอร์</h3>
+                    <span class="eng-name">Servo Motor</span>
+                    <p>มอเตอร์ที่สามารถควบคุมองศาการหมุนได้อย่างแม่นยำ ใช้สำหรับจำลองการเปิด-ปิดประตูรั้ว, ไม้กั้น
+                        หรือระบบล็อคอัตโนมัติ</p>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/BTR.png" alt="Battery"></div>
+                <div class="symbol-info">
+                    <h3>แบตเตอรี่</h3>
+                    <span class="eng-name">Battery (BTR)</span>
+                    <p>แหล่งจ่ายพลังงานไฟฟ้าสำรองให้กับระบบ เพื่อให้บ้านสามารถทำงานได้แม้ไม่มีไฟหลัก
+                        หรือใช้เก็บพลังงานจากโซลาร์เซลล์</p>
+                </div>
+            </div>
+
+            <div class="symbol-card">
+                <div class="symbol-img-box"><img src="images/symbol/SOLAR%20CELLS.png" alt="Solar Cells"></div>
+                <div class="symbol-info">
+                    <h3>แผงโซลาร์เซลล์</h3>
+                    <span class="eng-name">Solar Cells</span>
+                    <p>อุปกรณ์เปลี่ยนพลังงานแสงอาทิตย์เป็นพลังงานไฟฟ้า เพื่อใช้เป็นพลังงานสะอาดในระบบบ้านอัจฉริยะ (Smart
+                        Energy)</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

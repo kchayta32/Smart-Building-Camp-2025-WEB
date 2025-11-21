@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard & Manual - Smart Building Camp 2025</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,700;1,300&family=Sarabun:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* --- Theme Variables --- */
+        :root {
+            --harvard-crimson: #004aad;
+            /* ใช้สีโทนเดิม */
+            --harvard-black: #101820;
+            --gold-accent: #f97825;
+            --bg-light: #f4f6f8;
+            --success-green: #28a745;
+            --danger-red: #dc3545;
+            --panel-width: 450px;
+            /* ความกว้างของแถบคู่มือ */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--harvard-black);
+            overflow-x: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--harvard-crimson);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Menu Controls */
+        .header-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-manual {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-manual:hover,
+        .btn-manual.active {
+            background: var(--gold-accent);
+            border-color: var(--gold-accent);
+            color: #fff;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        /* --- Dashboard Grid --- */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            transition: 0.3s;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--harvard-crimson);
+        }
+
+        .last-update {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+
+        .house-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        .house-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-bottom: 4px solid #ddd;
+            position: relative;
+        }
+
+        .house-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .house-card.active {
+            border-bottom-color: var(--success-green);
+        }
+
+        .house-card.inactive {
+            border-bottom-color: var(--danger-red);
+        }
+
+        .house-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--harvard-crimson);
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-open {
+            background-color: var(--success-green);
+        }
+
+        .status-close {
+            background-color: var(--danger-red);
+        }
+
+        /* --- MANUAL SIDEBAR (Sliding Panel) --- */
+        .manual-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            /* ซ่อนไว้ด้านขวา */
+            width: var(--panel-width);
+            height: 100vh;
+            background: white;
+            z-index: 2000;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.15);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .manual-sidebar.open {
+            right: 0;
+        }
+
+        /* เลื่อนออกมา */
+
+        .sidebar-header {
+            padding: 20px;
+            background: var(--harvard-crimson);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h3 {
+            margin: 0;
+            font-family: 'Merriweather', serif;
+        }
+
+        .close-sidebar-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .sidebar-content {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Symbol List Styles */
+        .symbol-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .symbol-item:last-child {
+            border-bottom: none;
+        }
+
+        .symbol-img {
+            width: 60px;
+            height: 60px;
+            flex-shrink: 0;
+            background: #f9f9f9;
+            border-radius: 50%;
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .symbol-img img {
+            max-width: 70%;
+            max-height: 70%;
+            object-fit: contain;
+        }
+
+        .symbol-text h4 {
+            margin: 0 0 5px;
+            color: var(--harvard-crimson);
+            font-size: 1rem;
+        }
+
+        .symbol-text span {
+            display: block;
+            font-size: 0.75rem;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .symbol-text p {
+            font-size: 0.85rem;
+            color: #444;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* Overlay Background (เมื่อเปิด Sidebar) */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            backdrop-filter: blur(2px);
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* --- Modal (Zoom) Styles --- */
+        .modal-zoom-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+        }
+
+        .modal-zoom-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .zoom-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transform: scale(0.7);
+            transition: 0.3s;
+        }
+
+        .modal-zoom-overlay.show .zoom-content {
+            transform: scale(1);
+        }
+
+        .zoom-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Navigation Buttons for Zoom */
+        .zoom-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 3001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .prev-btn {
+            left: 20px;
+        }
+
+        .next-btn {
+            right: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            :root {
+                --panel-width: 90%;
+            }
+
+            /* Sidebar เต็มจอเกือบหมดบนมือถือ */
+            .header-title {
+                font-size: 0.9rem;
+            }
+
+            .btn-manual span {
+                display: none;
+            }
+
+            /* ซ่อนคำว่า Manual เหลือแต่ไอคอน */
+            .zoom-nav-btn {
+                display: none;
+            }
+
+            /* ซ่อนปุ่มเลื่อน ใช้ปัดเอา */
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <i class="fas fa-laptop-house fa-lg"></i>
+            <div class="header-title">Smart Building Dashboard</div>
+        </div>
+        <div class="header-controls">
+            <button class="btn-manual" onclick="toggleManual()">
+                <i class="fas fa-book-open"></i> <span>คู่มือระบบ</span>
+            </button>
+            <a href="index.html" class="back-link"><i class="fas fa-sign-out-alt"></i> ออก</a>
+        </div>
+    </header>
+
+    <div class="container" id="mainContainer">
+        <h2 class="page-title">สถานะประตูบ้าน 12 หลัง</h2>
+        <p class="last-update" id="lastUpdate">กำลังเชื่อมต่อระบบ...</p>
+
+        <div class="house-grid" id="houseGrid">
+        </div>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleManual()"></div>
+    <div class="manual-sidebar" id="manualSidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-book"></i> System Symbols</h3>
+            <button class="close-sidebar-btn" onclick="toggleManual()">&times;</button>
+        </div>
+        <div class="sidebar-content">
+            <p style="margin-bottom: 20px; color:#666; font-size:0.9rem;">
+                รายการสัญลักษณ์ที่ใช้ในแปลนบ้านและระบบ Smart Building
+            </p>
+
+            <div class="symbol-list">
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/PIR.png" alt="PIR"></div>
+                    <div class="symbol-text">
+                        <h4>เซนเซอร์จับความเคลื่อนไหว</h4>
+                        <span>PIR Sensor </span>
+                        <p>ตรวจจับความร้อน/การเคลื่อนไหวเพื่อสั่งงานระบบ</p>
+                    </div>
+                </div>
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/BUTTON.png" alt="Button"></div>
+                    <div class="symbol-text">
+                        <h4>ปุ่มกด</h4>
+                        <span>Button</span>
+                        <p>สวิตช์รับคำสั่ง Input จากผู้ใช้งาน</p>
+                    </div>
+                </div>
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/LED.png" alt="LED"></div>
+                    <div class="symbol-text">
+                        <h4>หลอดไฟ LED</h4>
+                        <span>LED Light</span>
+                        <p>แสดงสถานะการทำงานหรือให้แสงสว่าง</p>
+                    </div>
+                </div>
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/RELAY.png" alt="Relay"></div>
+                    <div class="symbol-text">
+                        <h4>รีเลย์</h4>
+                        <span>Relay Module</span>
+                        <p>สวิตช์ตัดต่อวงจรไฟฟ้ากระแสสูง</p>
+                    </div>
+                </div>
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/SERVO.png" alt="Servo"></div>
+                    <div class="symbol-text">
+                        <h4>เซอร์โวมอเตอร์</h4>
+                        <span>Servo Motor</span>
+                        <p>มอเตอร์หมุนกำหนดองศา (ใช้กับกลอนประตู)</p>
+                    </div>
+                </div>
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/REED_SWITCH.png" alt="Reed"></div>
+                    <div class="symbol-text">
+                        <h4>สวิตช์แม่เหล็ก</h4>
+                        <span>Reed Switch</span>
+                        <p>เซนเซอร์ตรวจจับการเปิด-ปิดประตู/หน้าต่าง</p>
+                    </div>
+                </div>
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/BTR.png" alt="BTR"></div>
+                    <div class="symbol-text">
+                        <h4>แบตเตอรี่</h4>
+                        <span>Battery (BTR)</span>
+                        <p>แหล่งจ่ายไฟสำรองให้กับระบบ</p>
+                    </div>
+                </div>
+                <div class="symbol-item">
+                    <div class="symbol-img"><img src="images/symbol/SOLAR%20CELLS.png" alt="Solar"></div>
+                    <div class="symbol-text">
+                        <h4>โซลาร์เซลล์</h4>
+                        <span>Solar Cells</span>
+                        <p>แผงรับพลังงานแสงอาทิตย์</p>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 50px;"></div>
+        </div>
+    </div>
+
+    <div class="modal-zoom-overlay" id="zoomModal" onclick="closeZoom(event)">
+        <button class="zoom-nav-btn prev-btn" onclick="changeHouse(-1, event)"><i
+                class="fas fa-chevron-left"></i></button>
+        <button class="zoom-nav-btn next-btn" onclick="changeHouse(1, event)"><i
+                class="fas fa-chevron-right"></i></button>
+
+        <div class="zoom-content" onclick="event.stopPropagation()">
+            <button class="zoom-close-btn" onclick="closeZoom()"><i class="fas fa-times"></i></button>
+            <div id="zoomBody">
+            </div>
+            <div style="margin-top: 20px; font-size: 0.8rem; color: #888;">
+                <i class="fas fa-hand-point-up"></i> ปัดซ้ายขวาเพื่อเปลี่ยนหลัง
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Logic 1: Dashboard Data & Grid ---
+        let housesData = [];
+        let currentHouseIndex = 0;
+
+        async function fetchHouseStatus() {
+            // จำลอง API Call
+            document.getElementById('lastUpdate').innerText = 'กำลังอัปเดตข้อมูล...';
+            await new Promise(r => setTimeout(r, 400));
+
+            housesData = Array.from({ length: 12 }, (_, i) => ({
+                id: i + 1,
+                doorOpen: Math.random() < 0.5,
+                temp: (24 + Math.random() * 5).toFixed(1),
+                battery: Math.floor(Math.random() * 40) + 60
+            }));
+
+            renderGrid();
+            const now = new Date();
+            document.getElementById('lastUpdate').innerText = `อัปเดตล่าสุด: ${now.toLocaleTimeString('th-TH')}`;
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('houseGrid');
+            grid.innerHTML = '';
+            housesData.forEach((house, index) => {
+                const isOpen = house.doorOpen;
+                const statusClass = isOpen ? 'status-open' : 'status-close';
+                const statusText = isOpen ? 'เปิด' : 'ปิด';
+                const activeClass = isOpen ? 'active' : 'inactive';
+
+                const html = `
+                    <div class="house-card ${activeClass}" onclick="openZoom(${index})">
+                        <div class="house-icon"><i class="fas fa-home"></i></div>
+                        <div style="font-weight:bold; margin-bottom:5px;">House ${house.id}</div>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+                grid.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        // --- Logic 2: Manual Sidebar Toggle ---
+        function toggleManual() {
+            const sidebar = document.getElementById('manualSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btn = document.querySelector('.btn-manual');
+
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            btn.classList.toggle('active');
+        }
+
+        // --- Logic 3: Zoom Modal & Swipe ---
+        const zoomModal = document.getElementById('zoomModal');
+        const zoomBody = document.getElementById('zoomBody');
+
+        function openZoom(index) {
+            currentHouseIndex = index;
+            updateZoomContent();
+            zoomModal.classList.add('show');
+        }
+
+        function closeZoom(e) {
+            if (e) e.stopPropagation();
+            zoomModal.classList.remove('show');
+        }
+
+        function updateZoomContent() {
+            const house = housesData[currentHouseIndex];
+            const color = house.doorOpen ? 'var(--success-green)' : 'var(--danger-red)';
+            const statusText = house.doorOpen ? 'เปิด (Open)' : 'ปิด (Closed)';
+            const icon = house.doorOpen ? 'fa-door-open' : 'fa-door-closed';
+
+            zoomBody.innerHTML = `
+                <i class="fas ${icon}" style="font-size: 4rem; color: ${color}; margin-bottom: 15px;"></i>
+                <h2 style="font-family:'Merriweather', serif;">House ${house.id}</h2>
+                <div style="font-size: 1.2rem; margin: 10px 0; color:${color}; font-weight:bold;">${statusText}</div>
+                
+                <div style="background:#f4f4f4; padding:15px; border-radius:8px; margin-top:15px; text-align:left; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div><i class="fas fa-thermometer-half"></i> ${house.temp}°C</div>
+                    <div><i class="fas fa-battery-three-quarters"></i> ${house.battery}%</div>
+                    <div style="grid-column: span 2; font-size:0.85rem; color:#666;">
+                        <i class="fas fa-wifi"></i> Connection: Excellent
+                    </div>
+                </div>
+            `;
+        }
+
+        function changeHouse(dir, e) {
+            if (e) e.stopPropagation();
+            currentHouseIndex = (currentHouseIndex + dir + 12) % 12;
+            // Animation Effect
+            const content = document.querySelector('.zoom-content');
+            content.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                updateZoomContent();
+                content.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        // Touch Swipe for Zoom Modal
+        let xStart = 0;
+        document.addEventListener('touchstart', e => xStart = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            if (!zoomModal.classList.contains('show')) return;
+            const xEnd = e.changedTouches[0].clientX;
+            if (xStart - xEnd > 50) changeHouse(1); // ปัดซ้าย -> ถัดไป
+            else if (xEnd - xStart > 50) changeHouse(-1); // ปัดขวา -> ย้อนกลับ
+        });
+
+        // Init
+        fetchHouseStatus();
+        setInterval(fetchHouseStatus, 5000); // Auto Refresh every 5s
+
+    </script>
+</body>
+
+</html>
